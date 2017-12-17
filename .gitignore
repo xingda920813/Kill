@@ -1,7 +1,3 @@
-# Built application files
-*.apk
-*.ap_
-
 # Files for the ART/Dalvik VM
 *.dex
 
@@ -11,11 +7,9 @@
 # Generated files
 bin/
 gen/
-out/
 
 # Gradle files
 .gradle/
-build/
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -49,7 +43,12 @@ captures/
 # Google Services (e.g. APIs or Firebase)
 google-services.json
 
-# Freeline
-freeline.py
-freeline/
-freeline_project_description.json
+app/build/generated/
+app/build/intermediates
+app/build/outputs/apk/debug/output.json
+app/build/outputs/logs
+build/android-profile/
+server/build/generated
+server/build/intermediates
+server/build/outputs/apk/debug/output.json
+server/build/outputs/logs
