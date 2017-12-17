@@ -18,7 +18,7 @@ public class TargetActivity extends Activity {
 
     static final Map<String, Integer> WHITE_LIST_APPS = new HashMap<>();
     static {
-        WHITE_LIST_APPS.put("com.tencent.mm", 24);
+        WHITE_LIST_APPS.put("com.tencent.mm", 23);
     }
 
     @SuppressWarnings("unchecked")
