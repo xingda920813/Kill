@@ -47,7 +47,7 @@ public class TargetActivity extends Activity {
                         .forEach(appInfo -> {
                             if (appInfo.targetSdkVersion >= Build.VERSION_CODES.M) appInfo.targetSdkVersion = Build.VERSION.SDK_INT;
                             if (appInfo.targetSdkVersion <= Build.VERSION_CODES.LOLLIPOP_MR1) appInfo.targetSdkVersion = Build.VERSION_CODES.LOLLIPOP_MR1;
-                            if (WHITE_LIST_APPS.containsKey(appInfo.packageName)) appInfo.targetSdkVersion = WHITE_LIST_APPS.getOrDefault(appInfo.packageName, appInfo.targetSdkVersion);
+                            appInfo.targetSdkVersion = WHITE_LIST_APPS.getOrDefault(appInfo.packageName, appInfo.targetSdkVersion);
                         });
             } catch (Exception e) { e.printStackTrace(); }
         }).start();
