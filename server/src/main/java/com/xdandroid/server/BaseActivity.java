@@ -44,8 +44,8 @@ abstract class BaseActivity extends Activity implements Utils {
                     elementsField.set(
                             srvDexPathList,
                             Utils.combineArray(
-                                    elementsField.get(dexPathListField.get(BaseActivity.class.getClassLoader())),
-                                    elementsField.get(srvDexPathList)
+                                    elementsField.get(srvDexPathList),
+                                    elementsField.get(dexPathListField.get(BaseActivity.class.getClassLoader()))
                             )
                     );
                     break;
