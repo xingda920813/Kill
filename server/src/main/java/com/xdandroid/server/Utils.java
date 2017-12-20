@@ -4,7 +4,7 @@ import java.lang.reflect.*;
 
 interface Utils {
 
-    default Object combineArray(Object firstArray, Object secondArray) {
+    static Object combineArray(Object firstArray, Object secondArray) {
         Class<?> localClass = firstArray.getClass().getComponentType();
         int firstArrayLength = Array.getLength(firstArray);
         int allLength = firstArrayLength + Array.getLength(secondArray);

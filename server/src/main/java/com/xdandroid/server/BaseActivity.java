@@ -15,22 +15,39 @@ import dalvik.system.*;
  */
 abstract class BaseActivity extends Activity implements Utils {
 
-    static Field sDexPathListField, sElementsField;
+    static ClassLoader sServicesClassLoader;
     static {
         try {
+            Field dexPathListField = null;
             Class<?> dexPathListClass = Class.forName("dalvik.system.DexPathList");
             for (Field f : BaseDexClassLoader.class.getDeclaredFields()) {
                 if (dexPathListClass.isAssignableFrom(f.getType())) {
                     f.setAccessible(true);
-                    sDexPathListField = f;
+                    dexPathListField = f;
                     break;
                 }
             }
+            Field elementsField = null;
             Class<? extends Object[]> elementsClass = (Class<? extends Object[]>) Class.forName("[Ldalvik.system.DexPathList$Element;");
             for (Field f : dexPathListClass.getDeclaredFields()) {
                 if (elementsClass.isAssignableFrom(f.getType())) {
                     f.setAccessible(true);
-                    sElementsField = f;
+                    elementsField = f;
+                    break;
+                }
+            }
+            assert dexPathListField != null;
+            assert elementsField != null;
+            for (Thread t : Thread.getAllStackTraces().keySet()) {
+                if ("ActivityManager".equals(t.getName())) {
+                    Object srvDexPathList = dexPathListField.get(sServicesClassLoader = t.getContextClassLoader());
+                    elementsField.set(
+                            srvDexPathList,
+                            Utils.combineArray(
+                                    elementsField.get(dexPathListField.get(BaseActivity.class.getClassLoader())),
+                                    elementsField.get(srvDexPathList)
+                            )
+                    );
                     break;
                 }
             }
@@ -44,23 +61,10 @@ abstract class BaseActivity extends Activity implements Utils {
         super.onCreate(savedInstanceState);
         new Thread(() -> {
             try {
-                for (Thread t : Thread.getAllStackTraces().keySet()) {
-                    if ("ActivityManager".equals(t.getName())) {
-                        ClassLoader srvCL = t.getContextClassLoader();
-                        Object srvDexPathList = sDexPathListField.get(srvCL);
-                        sElementsField.set(
-                                srvDexPathList,
-                                combineArray(
-                                        sElementsField.get(sDexPathListField.get(getClassLoader())),
-                                        sElementsField.get(srvDexPathList)
-                                )
-                        );
-                        srvCL.loadClass("com.xdandroid.server.Hack")
-                             .getMethod("hack", Object.class)
-                             .invoke(null, getToken());
-                        break;
-                    }
-                }
+                sServicesClassLoader
+                        .loadClass("com.xdandroid.server.Hack")
+                        .getMethod("hack", Object.class)
+                        .invoke(null, getToken());
             } catch (Throwable e) {
                 e.printStackTrace();
             }
