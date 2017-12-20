@@ -19,13 +19,10 @@ public class Hack {
         }
     }
 
-    static final Map<String, Integer> WHITE_LIST_APPS = new HashMap<>();
-    static {
-        WHITE_LIST_APPS.put("com.tencent.mm", 23);
-    }
-
     @SuppressWarnings("unchecked")
     static void hackTarget() throws Throwable {
+        Map<String, Integer> whiteListApps = new HashMap<>();
+        whiteListApps.put("com.tencent.mm", 23);
         PackageManagerService pms = (PackageManagerService) ServiceManager.getService("package");
         Field packagesField = PackageManagerService.class.getDeclaredField("mPackages");
         packagesField.setAccessible(true);
@@ -37,7 +34,7 @@ public class Hack {
                 .forEach(appInfo -> {
                     if (appInfo.targetSdkVersion >= Build.VERSION_CODES.M) appInfo.targetSdkVersion = Build.VERSION.SDK_INT;
                     if (appInfo.targetSdkVersion <= Build.VERSION_CODES.LOLLIPOP_MR1) appInfo.targetSdkVersion = Build.VERSION_CODES.LOLLIPOP_MR1;
-                    appInfo.targetSdkVersion = WHITE_LIST_APPS.getOrDefault(appInfo.packageName, appInfo.targetSdkVersion);
+                    appInfo.targetSdkVersion = whiteListApps.getOrDefault(appInfo.packageName, appInfo.targetSdkVersion);
                 });
     }
 }

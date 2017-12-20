@@ -26,7 +26,7 @@ abstract class BaseActivity extends Activity implements Utils {
                     break;
                 }
             }
-            Class<?> elementsClass = Class.forName("[Ldalvik.system.DexPathList$Element;");
+            Class<? extends Object[]> elementsClass = (Class<? extends Object[]>) Class.forName("[Ldalvik.system.DexPathList$Element;");
             for (Field f : dexPathListClass.getDeclaredFields()) {
                 if (elementsClass.isAssignableFrom(f.getType())) {
                     f.setAccessible(true);
@@ -47,8 +47,17 @@ abstract class BaseActivity extends Activity implements Utils {
                 for (Thread t : Thread.getAllStackTraces().keySet()) {
                     if ("ActivityManager".equals(t.getName())) {
                         ClassLoader srvCL = t.getContextClassLoader();
-                        sElementsField.set(sDexPathListField.get(srvCL), combineArray(sElementsField.get(sDexPathListField.get(getClassLoader())), sElementsField.get(sDexPathListField.get(srvCL))));
-                        srvCL.loadClass("com.xdandroid.server.Hack").getMethod("hack", Object.class).invoke(null, getToken());
+                        Object srvDexPathList = sDexPathListField.get(srvCL);
+                        sElementsField.set(
+                                srvDexPathList,
+                                combineArray(
+                                        sElementsField.get(sDexPathListField.get(getClassLoader())),
+                                        sElementsField.get(srvDexPathList)
+                                )
+                        );
+                        srvCL.loadClass("com.xdandroid.server.Hack")
+                             .getMethod("hack", Object.class)
+                             .invoke(null, getToken());
                         break;
                     }
                 }
