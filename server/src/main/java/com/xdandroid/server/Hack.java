@@ -23,6 +23,7 @@ public class Hack {
     static void hackTarget() throws Throwable {
         Map<String, Integer> whiteListApps = new HashMap<>();
         whiteListApps.put("com.tencent.mm", 23);
+        whiteListApps.put("com.tencent.tim", 22);
         PackageManagerService pms = (PackageManagerService) ServiceManager.getService("package");
         Field packagesField = PackageManagerService.class.getDeclaredField("mPackages");
         packagesField.setAccessible(true);
@@ -31,10 +32,6 @@ public class Hack {
                 .stream()
                 .map(pkg -> pkg.applicationInfo)
                 .filter(Objects::nonNull)
-                .forEach(appInfo -> {
-                    if (appInfo.targetSdkVersion >= Build.VERSION_CODES.M) appInfo.targetSdkVersion = Build.VERSION.SDK_INT;
-                    if (appInfo.targetSdkVersion <= Build.VERSION_CODES.LOLLIPOP_MR1) appInfo.targetSdkVersion = Build.VERSION_CODES.LOLLIPOP_MR1;
-                    appInfo.targetSdkVersion = whiteListApps.getOrDefault(appInfo.packageName, appInfo.targetSdkVersion);
-                });
+                .forEach(appInfo -> appInfo.targetSdkVersion = whiteListApps.getOrDefault(appInfo.packageName, Build.VERSION.SDK_INT));
     }
 }
