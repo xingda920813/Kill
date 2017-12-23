@@ -35,7 +35,7 @@ public class RevokeActivity extends Activity implements Utils {
                       try { setModeMethod.invoke(aom, 40, uid, n, AppOpsManager.MODE_IGNORED); } catch (Exception e) { e.printStackTrace(); }
                       try { setModeMethod.invoke(aom, 63, uid, n, WHITE_LIST_APPS.contains(n) ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED); } catch (Exception e) { e.printStackTrace(); }
                       if (shouldDisableBootCompletedOp()) try { setModeMethod.invoke(aom, 66, uid, n, WHITE_LIST_APPS.contains(n) ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED); } catch (Exception e) { e.printStackTrace(); }
-                      if (i.applicationInfo.targetSdkVersion < Build.VERSION_CODES.M && i.requestedPermissions != null) {
+                      if (i.applicationInfo.targetSdkVersion <= Build.VERSION_CODES.LOLLIPOP_MR1 && i.requestedPermissions != null) {
                           Arrays.stream(i.requestedPermissions)
                                 .map(p -> {
                                     try { return pm.getPermissionInfo(p, 0); } catch (Exception e) { return null; }
