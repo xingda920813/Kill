@@ -7,8 +7,9 @@ import java.util.*;
 interface Utils extends ShellUtils {
 
     List<String> WHITE_LIST_APPS = Arrays.asList(
-            "com.breel.wallpapers",
             "com.github.shadowsocks",
+            "com.maxmpz.audioplayer",
+            "com.maxmpz.audioplayer.unlock",
             "com.xdandroid.kill",
             "com.xdandroid.server",
             "me.piebridge.brevent",
