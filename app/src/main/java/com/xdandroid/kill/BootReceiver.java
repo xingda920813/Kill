@@ -13,14 +13,18 @@ public class BootReceiver extends BroadcastReceiver {
         new Thread(() -> {
             try {
                 Context c = context.getApplicationContext();
-                Intent revokeIntent = new Intent(c, RevokeActivity.class);
-                revokeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                c.startActivity(revokeIntent);
+                Intent i = new Intent(c, RevokeActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                c.startActivity(i);
                 Thread.sleep(5 * 1000);
-                Intent serverIntent = new Intent();
-                serverIntent.setComponent(new ComponentName("com.xdandroid.server", "com.xdandroid.server.TargetActivity"));
-                serverIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                c.startActivity(serverIntent);
+                i = new Intent();
+                i.setComponent(new ComponentName("com.xdandroid.server", "com.xdandroid.server.TargetActivity"));
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                c.startActivity(i);
+                i = new Intent();
+                i.setComponent(new ComponentName("me.piebridge.brevent", "me.piebridge.brevent.ui.BreventActivity"));
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                c.startActivity(i);
             } catch (Exception e) { e.printStackTrace(); }
         }).start();
     }
