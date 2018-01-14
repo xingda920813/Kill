@@ -1,6 +1,7 @@
 package com.xdandroid.kill;
 
 import java.io.*;
+import java.util.*;
 
 interface ShellUtils {
 
@@ -9,9 +10,9 @@ interface ShellUtils {
     String COMMAND_EXIT = "exit\n";
     String COMMAND_LINE_END = "\n";
 
-    default CommandResult execCommand(String[] commands, boolean isRoot) {
+    default CommandResult execCommand(Collection<String> commands, boolean isRoot) {
         int result = -1;
-        if (commands == null || commands.length == 0) return new CommandResult(result, null, null);
+        if (commands == null || commands.isEmpty()) return new CommandResult(result, null, null);
         Process process = null;
         BufferedReader successResult = null;
         BufferedReader errorResult = null;

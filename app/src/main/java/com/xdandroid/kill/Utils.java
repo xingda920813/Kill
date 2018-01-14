@@ -1,5 +1,7 @@
 package com.xdandroid.kill;
 
+import android.*;
+import android.app.*;
 import android.os.*;
 
 import java.util.*;
@@ -22,8 +24,13 @@ interface Utils extends ShellUtils {
     );
 
     List<String> WHITE_LIST_PERMISSIONS = Arrays.asList(
-            "android.permission.READ_EXTERNAL_STORAGE",
-            "android.permission.WRITE_EXTERNAL_STORAGE"
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            AppOpsManager.OPSTR_READ_EXTERNAL_STORAGE,
+            "READ_EXTERNAL_STORAGE",
+
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            AppOpsManager.OPSTR_WRITE_EXTERNAL_STORAGE,
+            "WRITE_EXTERNAL_STORAGE"
     );
 
     String[] BLACK_LIST_OPS = {
@@ -43,7 +50,7 @@ interface Utils extends ShellUtils {
     int CM_SDK_INT = SystemProperties.getInt("ro.cm.build.version.plat.sdk", 0);
 
     default void setPermissive() {
-        new Thread(() -> execCommand(new String[]{"setenforce 0"}, true)).start();
+        new Thread(() -> execCommand(Collections.singleton("setenforce 0"), true)).start();
     }
 
     default boolean shouldDisableBootCompletedOp() {
@@ -52,9 +59,5 @@ interface Utils extends ShellUtils {
 
     default <E extends Throwable, R extends RuntimeException> R asUnchecked(Throwable t) throws E {
         throw (E) t;
-    }
-
-    default String genOp(String pkg, String op) {
-        return "adb shell cmd appops set " + pkg + " " + op + " " + (WHITE_LIST_OPS_FOR_WHITE_LIST_APPS.contains(op) && WHITE_LIST_APPS.contains(pkg) ? "allow" : "ignore") + "\n\n";
     }
 }

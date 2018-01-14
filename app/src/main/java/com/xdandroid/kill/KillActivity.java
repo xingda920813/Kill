@@ -4,7 +4,7 @@ import android.app.*;
 import android.content.pm.*;
 import android.os.*;
 
-import java.lang.reflect.*;
+import java.util.*;
 
 /**
  * uses-permission android:name="android.permission.FORCE_STOP_PACKAGES"
@@ -16,21 +16,15 @@ public class KillActivity extends Activity implements Utils {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setPermissive();
-        new Thread(() -> {
-            try {
-                Method m = ActivityManager.class.getMethod("forceStopPackage", String.class);
-                ActivityManager am = getSystemService(ActivityManager.class);
-                getPackageManager().getInstalledPackages(0)
-                                   .stream()
-                                   .filter(i -> (i.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0)
-                                   .filter(i -> (i.applicationInfo.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 0)
-                                   .map(i -> i.packageName)
-                                   .filter(n -> !WHITE_LIST_APPS.contains(n))
-                                   .forEach(n -> {
-                                       try { m.invoke(am, n); } catch (Exception e) { e.printStackTrace(); }
-                                   });
-            } catch (Exception e) { e.printStackTrace(); }
-        }).start();
+        new Thread(() -> getPackageManager()
+                .getInstalledPackages(0)
+                .stream()
+                .filter(i -> (i.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0)
+                .filter(i -> (i.applicationInfo.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 0)
+                .map(i -> i.packageName)
+                .filter(n -> !WHITE_LIST_APPS.contains(n))
+                .forEach(Objects.requireNonNull(getSystemService(ActivityManager.class))::forceStopPackage))
+                .start();
         finish();
     }
 }

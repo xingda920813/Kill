@@ -5,7 +5,6 @@ import android.content.pm.*;
 import android.os.*;
 import android.text.*;
 
-import java.lang.reflect.*;
 import java.util.*;
 
 /**
@@ -19,42 +18,40 @@ public class RevokeActivity extends Activity implements Utils {
         super.onCreate(savedInstanceState);
         setPermissive();
         new Thread(() -> {
-            try {
-                PackageManager pm = getPackageManager();
-                AppOpsManager aom = getSystemService(AppOpsManager.class);
-                Method setUidModeMethod = AppOpsManager.class.getMethod("setUidMode", String.class, int.class, int.class);
-                Method setModeMethod = AppOpsManager.class.getMethod("setMode", int.class, int.class, String.class, int.class);
-                pm.getInstalledPackages(PackageManager.GET_PERMISSIONS)
-                  .stream()
-                  .filter(i -> (i.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0)
-                  .filter(i -> (i.applicationInfo.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 0)
-                  .forEach(i -> {
-                      int uid = i.applicationInfo.uid;
-                      String n = i.applicationInfo.packageName;
-                      try { setModeMethod.invoke(aom, 10, uid, n, AppOpsManager.MODE_IGNORED); } catch (Exception e) { e.printStackTrace(); }
-                      try { setModeMethod.invoke(aom, 40, uid, n, AppOpsManager.MODE_IGNORED); } catch (Exception e) { e.printStackTrace(); }
-                      try { setModeMethod.invoke(aom, 63, uid, n, WHITE_LIST_APPS.contains(n) ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED); } catch (Exception e) { e.printStackTrace(); }
-                      if (shouldDisableBootCompletedOp()) try { setModeMethod.invoke(aom, 66, uid, n, WHITE_LIST_APPS.contains(n) ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED); } catch (Exception e) { e.printStackTrace(); }
-                      if (i.applicationInfo.targetSdkVersion <= Build.VERSION_CODES.LOLLIPOP_MR1 && i.requestedPermissions != null) {
-                          Arrays.stream(i.requestedPermissions)
-                                .map(p -> {
-                                    try { return pm.getPermissionInfo(p, 0); } catch (Exception e) { return null; }
-                                })
-                                .filter(Objects::nonNull)
-                                .filter(pi -> (pi.protectionLevel & PermissionInfo.PROTECTION_MASK_BASE) == PermissionInfo.PROTECTION_DANGEROUS)
-                                .map(pi -> pi.name)
-                                .filter(pn -> pn.startsWith("android"))
-                                .filter(pn -> !WHITE_LIST_PERMISSIONS.contains(pn))
-                                .map(AppOpsManager::permissionToOp)
-                                .filter(op -> !TextUtils.isEmpty(op))
-                                .forEach(op -> {
-                                    try { setUidModeMethod.invoke(aom, op, uid, AppOpsManager.MODE_IGNORED); } catch (Exception e) { e.printStackTrace(); }
-                                });
-                      }
-                      try { setModeMethod.invoke(aom, 23, uid, n, AppOpsManager.MODE_IGNORED); } catch (Exception e) { e.printStackTrace(); }
-                      try { setModeMethod.invoke(aom, 24, uid, n, AppOpsManager.MODE_IGNORED); } catch (Exception e) { e.printStackTrace(); }
-                  });
-            } catch (Exception e) { e.printStackTrace(); }
+            PackageManager pm = getPackageManager();
+            AppOpsManager aom = getSystemService(AppOpsManager.class);
+            Set<String> revokeOps = new HashSet<>();
+            pm.getInstalledPackages(PackageManager.GET_PERMISSIONS)
+              .stream()
+              .filter(i -> (i.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0)
+              .filter(i -> (i.applicationInfo.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 0)
+              .forEach(i -> {
+                  int uid = i.applicationInfo.uid;
+                  String n = i.applicationInfo.packageName;
+                  int targetSdk = i.applicationInfo.targetSdkVersion;
+                  aom.setMode(10, uid, n, AppOpsManager.MODE_IGNORED);
+                  aom.setMode(23, uid, n, AppOpsManager.MODE_IGNORED);
+                  aom.setMode(24, uid, n, AppOpsManager.MODE_IGNORED);
+                  aom.setMode(40, uid, n, AppOpsManager.MODE_IGNORED);
+                  aom.setMode(63, uid, n, WHITE_LIST_APPS.contains(n) ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
+                  if (shouldDisableBootCompletedOp()) aom.setMode(66, uid, n, WHITE_LIST_APPS.contains(n) ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
+                  if (i.requestedPermissions == null) return;
+                  Arrays.stream(i.requestedPermissions)
+                        .map(p -> {
+                            try { return pm.getPermissionInfo(p, 0); } catch (Exception e) { return null; }
+                        })
+                        .filter(Objects::nonNull)
+                        .filter(pi -> (pi.protectionLevel & PermissionInfo.PROTECTION_MASK_BASE) == PermissionInfo.PROTECTION_DANGEROUS)
+                        .map(pi -> pi.name)
+                        .filter(pn -> pn.startsWith("android"))
+                        .map(pn -> targetSdk >= Build.VERSION_CODES.M ? pn : AppOpsManager.permissionToOp(pn))
+                        .filter(op -> !TextUtils.isEmpty(op))
+                        .forEach(op -> {
+                            if (targetSdk >= Build.VERSION_CODES.M) revokeOps.add("pm " + (WHITE_LIST_PERMISSIONS.contains(op) ? "grant" : "revoke") + ' ' + n + ' ' + op);
+                            else aom.setUidMode(op, uid, WHITE_LIST_PERMISSIONS.contains(op) ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
+                        });
+              });
+            execCommand(revokeOps, true);
         }).start();
         finish();
     }
