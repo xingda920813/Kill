@@ -59,16 +59,14 @@ abstract class BaseActivity extends Activity implements Utils {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        new Thread(() -> {
-            try {
-                sServicesClassLoader
-                        .loadClass("com.xdandroid.server.Hack")
-                        .getMethod("hack", Object.class)
-                        .invoke(null, getToken());
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        }).start();
+        try {
+            sServicesClassLoader
+                    .loadClass("com.xdandroid.server.Hack")
+                    .getMethod("hack", Object.class)
+                    .invoke(null, getToken());
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
         finish();
     }
 
