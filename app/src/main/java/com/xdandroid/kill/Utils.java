@@ -4,9 +4,10 @@ import android.*;
 import android.app.*;
 import android.os.*;
 
+import java.io.*;
 import java.util.*;
 
-interface Utils extends ShellUtils {
+interface Utils {
 
     List<String> WHITE_LIST_APPS = Arrays.asList(
             "com.github.shadowsocks",
@@ -50,7 +51,7 @@ interface Utils extends ShellUtils {
     int CM_SDK_INT = SystemProperties.getInt("ro.cm.build.version.plat.sdk", 0);
 
     default void setPermissive() {
-        new Thread(() -> execCommand(Collections.singleton("setenforce 0"), true)).start();
+        try { Runtime.getRuntime().exec("su -c setenforce 0"); } catch (IOException e) { throw asUnchecked(e); }
     }
 
     default boolean shouldDisableBootCompletedOp() {

@@ -16,15 +16,14 @@ public class KillActivity extends Activity implements Utils {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setPermissive();
-        new Thread(() -> getPackageManager()
+        getPackageManager()
                 .getInstalledPackages(0)
                 .stream()
                 .filter(i -> (i.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0)
                 .filter(i -> (i.applicationInfo.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 0)
                 .map(i -> i.packageName)
                 .filter(n -> !WHITE_LIST_APPS.contains(n))
-                .forEach(Objects.requireNonNull(getSystemService(ActivityManager.class))::forceStopPackage))
-                .start();
+                .forEach(Objects.requireNonNull(getSystemService(ActivityManager.class))::forceStopPackage);
         finish();
     }
 }
