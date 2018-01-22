@@ -54,7 +54,7 @@ public class RevokeActivity extends Activity implements Utils {
                     });
           });
         revokeOps.stream().map(op -> "su -c " + op).forEach(cmd -> {
-            try { Runtime.getRuntime().exec(cmd); } catch (IOException e) { throw asUnchecked(e); }
+            try { Runtime.getRuntime().exec(cmd); } catch (IOException e) { e.printStackTrace(); }
         });
         finish();
     }
