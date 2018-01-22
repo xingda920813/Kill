@@ -51,7 +51,7 @@ interface Utils {
     int CM_SDK_INT = SystemProperties.getInt("ro.cm.build.version.plat.sdk", 0);
 
     default void setPermissive() {
-        try { Runtime.getRuntime().exec("su -c setenforce 0"); } catch (IOException e) { throw asUnchecked(e); }
+        try { Runtime.getRuntime().exec("su -c setenforce 0"); } catch (IOException e) { e.printStackTrace(); }
     }
 
     default boolean shouldDisableBootCompletedOp() {
