@@ -58,6 +58,7 @@ interface Utils {
         return Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1 && CM_SDK_INT >= 6;
     }
 
+    @SuppressWarnings({"TypeParameterHidesVisibleType", "unchecked"})
     default <E extends Throwable, R extends RuntimeException> R asUnchecked(Throwable t) throws E {
         throw (E) t;
     }

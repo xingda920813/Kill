@@ -1,6 +1,5 @@
 package com.xdandroid.kill;
 
-import android.*;
 import android.app.*;
 import android.content.pm.*;
 import android.os.*;
