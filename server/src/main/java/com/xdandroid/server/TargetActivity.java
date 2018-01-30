@@ -51,7 +51,7 @@ public class TargetActivity extends Activity {
                     .map(TargetActivity::mapToAppInfo)
                     .filter(Objects::nonNull)
                     .forEach(ai -> {
-                        assert ai != null;
+                        Objects.requireNonNull(ai).flags |= ApplicationInfo.FLAG_DEBUGGABLE;
                         if (ai.targetSdkVersion >= Build.VERSION_CODES.M) ai.targetSdkVersion = Build.VERSION_CODES.CUR_DEVELOPMENT - 1;
                         if (ai.targetSdkVersion <= Build.VERSION_CODES.LOLLIPOP_MR1) ai.targetSdkVersion = Build.VERSION_CODES.LOLLIPOP_MR1;
                         ai.targetSdkVersion = whiteListApps.getOrDefault(ai.packageName, ai.targetSdkVersion);
