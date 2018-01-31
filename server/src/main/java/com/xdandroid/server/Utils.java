@@ -27,7 +27,7 @@ interface Utils {
     Field[] sServicesField = new Field[1];
     Field[] sServiceInfoField = new Field[1];
 
-    static ApplicationInfo fromPkgToAppInfo(Object pkg) {
+    default ApplicationInfo fromPkgToAppInfo(Object pkg) {
         try {
             if (sAppInfoField[0] == null) for (Field f : pkg.getClass().getDeclaredFields())
                 if (ApplicationInfo.class.isAssignableFrom(f.getType())) {
@@ -42,17 +42,17 @@ interface Utils {
         }
     }
 
-    static Stream<ServiceInfo> fromPkgToSrvInfo(Object pkg) {
+    default Stream<ServiceInfo> fromPkgToSrvInfo(Object pkg) {
         try {
             if (sServicesField[0] == null) sServicesField[0] = pkg.getClass().getField("services");
-            return ((ArrayList<?>) sServicesField[0].get(pkg)).stream().map(Utils::fromSrvToSrvInfo);
+            return ((ArrayList<?>) sServicesField[0].get(pkg)).stream().map(this::fromSrvToSrvInfo);
         } catch (Exception e) {
             e.printStackTrace();
             return Stream.empty();
         }
     }
 
-    static ServiceInfo fromSrvToSrvInfo(Object srv) {
+    default ServiceInfo fromSrvToSrvInfo(Object srv) {
         try {
             if (sServiceInfoField[0] == null) for (Field f : srv.getClass().getFields())
                 if (ServiceInfo.class.isAssignableFrom(f.getType())) {

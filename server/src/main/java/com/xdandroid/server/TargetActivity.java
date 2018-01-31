@@ -30,17 +30,16 @@ public class TargetActivity extends Activity implements Utils {
             packages.values()
                     .stream()
                     .filter(Objects::nonNull)
-                    .map(Utils::fromPkgToAppInfo)
+                    .map(this::fromPkgToAppInfo)
                     .forEach(ai -> {
                         if (ai.targetSdkVersion >= Build.VERSION_CODES.M) ai.targetSdkVersion = Build.VERSION_CODES.CUR_DEVELOPMENT - 1;
                         if (ai.targetSdkVersion <= Build.VERSION_CODES.LOLLIPOP_MR1) ai.targetSdkVersion = Build.VERSION_CODES.LOLLIPOP_MR1;
                         ai.targetSdkVersion = whiteListApps.getOrDefault(ai.packageName, ai.targetSdkVersion);
-                        ai.flags |= ApplicationInfo.FLAG_DEBUGGABLE;
                     });
             packages.values()
                     .stream()
                     .filter(Objects::nonNull)
-                    .flatMap(Utils::fromPkgToSrvInfo)
+                    .flatMap(this::fromPkgToSrvInfo)
                     .filter(si -> (si.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0)
                     .filter(si -> (si.applicationInfo.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 0)
                     .filter(si -> !WHITE_LIST_APPS.contains(si.packageName))
