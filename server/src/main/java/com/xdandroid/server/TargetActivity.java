@@ -14,25 +14,7 @@ import java.util.*;
  * android:process="system"
  * android:theme="@android:style/Theme.NoDisplay"
  */
-public class TargetActivity extends Activity {
-
-    static Field sAppInfoField;
-
-    static ApplicationInfo mapToAppInfo(Object pkg) {
-        if (sAppInfoField == null)
-            for (Field f : pkg.getClass().getDeclaredFields())
-                if (ApplicationInfo.class.isAssignableFrom(f.getType())) {
-                    f.setAccessible(true);
-                    sAppInfoField = f;
-                    break;
-                }
-        try {
-            return (ApplicationInfo) sAppInfoField.get(pkg);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+public class TargetActivity extends Activity implements Utils {
 
     @SuppressWarnings("unchecked")
     @Override
@@ -48,14 +30,21 @@ public class TargetActivity extends Activity {
             packages.values()
                     .stream()
                     .filter(Objects::nonNull)
-                    .map(TargetActivity::mapToAppInfo)
-                    .filter(Objects::nonNull)
+                    .map(Utils::fromPkgToAppInfo)
                     .forEach(ai -> {
-                        Objects.requireNonNull(ai).flags |= ApplicationInfo.FLAG_DEBUGGABLE;
                         if (ai.targetSdkVersion >= Build.VERSION_CODES.M) ai.targetSdkVersion = Build.VERSION_CODES.CUR_DEVELOPMENT - 1;
                         if (ai.targetSdkVersion <= Build.VERSION_CODES.LOLLIPOP_MR1) ai.targetSdkVersion = Build.VERSION_CODES.LOLLIPOP_MR1;
                         ai.targetSdkVersion = whiteListApps.getOrDefault(ai.packageName, ai.targetSdkVersion);
+                        ai.flags |= ApplicationInfo.FLAG_DEBUGGABLE;
                     });
+            packages.values()
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .flatMap(Utils::fromPkgToSrvInfo)
+                    .filter(si -> (si.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0)
+                    .filter(si -> (si.applicationInfo.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 0)
+                    .filter(si -> !WHITE_LIST_APPS.contains(si.packageName))
+                    .forEach(si -> si.flags |= ServiceInfo.FLAG_STOP_WITH_TASK);
         } catch (Throwable e) {
             e.printStackTrace();
         }
