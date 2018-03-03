@@ -21,8 +21,8 @@ public class TargetActivity extends Activity implements Utils {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
-            Map<String, Integer> whiteListApps = new HashMap<>();
-            whiteListApps.put("com.tencent.mm", 23);
+            Map<String, Integer> whiteListForTarget = new HashMap<>();
+            whiteListForTarget.put("com.tencent.mm", 23);
             IPackageManager.Stub pms = (IPackageManager.Stub) ServiceManager.getService("package");
             Field packagesField = pms.getClass().getDeclaredField("mPackages");
             packagesField.setAccessible(true);
@@ -34,7 +34,7 @@ public class TargetActivity extends Activity implements Utils {
                     .forEach(ai -> {
                         if (ai.targetSdkVersion >= Build.VERSION_CODES.M) ai.targetSdkVersion = Build.VERSION_CODES.CUR_DEVELOPMENT - 1;
                         if (ai.targetSdkVersion <= Build.VERSION_CODES.LOLLIPOP_MR1) ai.targetSdkVersion = Build.VERSION_CODES.LOLLIPOP_MR1;
-                        ai.targetSdkVersion = whiteListApps.getOrDefault(ai.packageName, ai.targetSdkVersion);
+                        ai.targetSdkVersion = whiteListForTarget.getOrDefault(ai.packageName, ai.targetSdkVersion);
                     });
             packages.values()
                     .stream()
