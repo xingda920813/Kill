@@ -22,10 +22,9 @@ public class SystemActivity extends Activity implements Utils {
                 Runtime.getRuntime().exec("su -c rm -f /sdcard/build.prop").waitFor();
                 Runtime.getRuntime().exec("su -c cp /system/build.prop /sdcard/build.prop").waitFor();
                 Path path = Paths.get("/sdcard/build.prop");
-                Charset charset = StandardCharsets.UTF_8;
-                String content = new String(Files.readAllBytes(path), charset);
-                content = content.replaceAll("control_privapp_permissions=enforce", "control_privapp_permissions=log");
-                Files.write(path, content.getBytes(charset));
+                Files.write(path, new String(Files.readAllBytes(path), StandardCharsets.UTF_8)
+                        .replaceAll("control_privapp_permissions=enforce", "control_privapp_permissions=log")
+                        .getBytes(StandardCharsets.UTF_8));
                 Runtime.getRuntime().exec("su -c rm -f /system/build.bak").waitFor();
                 Runtime.getRuntime().exec("su -c cp /system/build.prop /system/build.bak").waitFor();
                 Runtime.getRuntime().exec("su -c chmod 0600 /system/build.bak").waitFor();
