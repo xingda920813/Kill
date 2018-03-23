@@ -1,10 +1,10 @@
 package com.xdandroid.server;
 
-import android.content.pm.*;
-
+import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.stream.*;
+
+import dalvik.system.*;
 
 interface Utils {
 
@@ -23,46 +23,73 @@ interface Utils {
             "com.alibaba.alimei"
     );
 
-    Field[] sAppInfoField = new Field[1];
-    Field[] sServicesField = new Field[1];
-    Field[] sServiceInfoField = new Field[1];
-
-    default ApplicationInfo fromPkgToAppInfo(Object pkg) {
-        try {
-            if (sAppInfoField[0] == null) for (Field f : pkg.getClass().getDeclaredFields())
-                if (ApplicationInfo.class.isAssignableFrom(f.getType())) {
-                    f.setAccessible(true);
-                    sAppInfoField[0] = f;
-                    break;
-                }
-            return (ApplicationInfo) sAppInfoField[0].get(pkg);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ApplicationInfo();
-        }
+    static Object combineArray(Object firstArray, Object secondArray) {
+        Class<?> localClass = firstArray.getClass().getComponentType();
+        int firstArrayLength = Array.getLength(firstArray);
+        int allLength = firstArrayLength + Array.getLength(secondArray);
+        Object result = Array.newInstance(localClass, allLength);
+        for (int k = 0; k < allLength; ++k) if (k < firstArrayLength) Array.set(result, k, Array.get(firstArray, k)); else Array.set(result, k, Array.get(secondArray, k - firstArrayLength));
+        return result;
     }
 
-    default Stream<ServiceInfo> fromPkgToSrvInfo(Object pkg) {
-        try {
-            if (sServicesField[0] == null) sServicesField[0] = pkg.getClass().getField("services");
-            return ((ArrayList<?>) sServicesField[0].get(pkg)).stream().map(this::fromSrvToSrvInfo);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Stream.empty();
+    static Field findField(Object o, String name) throws NoSuchFieldException {
+        for (Class<?> clazz = o.getClass(); clazz != null; clazz = clazz.getSuperclass()) {
+            try {
+                Field f = clazz.getDeclaredField(name);
+                f.setAccessible(true);
+                return f;
+            } catch (NoSuchFieldException ignored) { }
         }
+        throw new NoSuchFieldException("Field " + name + " not found in " + o.getClass());
     }
 
-    default ServiceInfo fromSrvToSrvInfo(Object srv) {
-        try {
-            if (sServiceInfoField[0] == null) for (Field f : srv.getClass().getFields())
-                if (ServiceInfo.class.isAssignableFrom(f.getType())) {
-                    sServiceInfoField[0] = f;
-                    break;
-                }
-            return (ServiceInfo) sServiceInfoField[0].get(srv);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ServiceInfo();
+    static Field findField(Class<?> originClass, String name) throws NoSuchFieldException {
+        for (Class<?> clazz = originClass; clazz != null; clazz = clazz.getSuperclass()) {
+            try {
+                Field f = clazz.getDeclaredField(name);
+                f.setAccessible(true);
+                return f;
+            } catch (NoSuchFieldException ignored) { }
         }
+        throw new NoSuchFieldException("Field " + name + " not found in " + originClass);
+    }
+
+    static Constructor<?> findConstructor(Object instance, Class<?>... parameterTypes) throws NoSuchMethodException {
+        for (Class<?> clazz = instance.getClass(); clazz != null; clazz = clazz.getSuperclass()) {
+            try {
+                Constructor<?> cons = clazz.getDeclaredConstructor(parameterTypes);
+                cons.setAccessible(true);
+                return cons;
+            } catch (NoSuchMethodException ignored) { }
+        }
+        throw new NoSuchMethodException("Constructor" + " with parameters " + Arrays.asList(parameterTypes) + " not found in " + instance.getClass());
+    }
+
+    @SuppressWarnings("unchecked")
+    static Object recreateDexPathList(Object originalDexPathList, ClassLoader newDefiningContext) throws Exception {
+        final Field dexElementsField = findField(originalDexPathList, "dexElements");
+        final Object[] dexElements = (Object[]) dexElementsField.get(originalDexPathList);
+        final Field nativeLibraryDirectoriesField = findField(originalDexPathList, "nativeLibraryDirectories");
+        final List<File> nativeLibraryDirectories = (List<File>) nativeLibraryDirectoriesField.get(originalDexPathList);
+        final StringBuilder dexPathBuilder = new StringBuilder();
+        final Field dexFileField = findField(dexElements.getClass().getComponentType(), "dexFile");
+        boolean isFirstItem = true;
+        for (Object dexElement : dexElements) {
+            final DexFile dexFile = (DexFile) dexFileField.get(dexElement);
+            if (dexFile == null) continue;
+            if (isFirstItem) isFirstItem = false; else dexPathBuilder.append(File.pathSeparator);
+            dexPathBuilder.append(dexFile.getName());
+        }
+        final String dexPath = dexPathBuilder.toString();
+        final StringBuilder libraryPathBuilder = new StringBuilder();
+        isFirstItem = true;
+        for (File libDir : nativeLibraryDirectories) {
+            if (libDir == null) continue;
+            if (isFirstItem) isFirstItem = false; else libraryPathBuilder.append(File.pathSeparator);
+            libraryPathBuilder.append(libDir.getAbsolutePath());
+        }
+        final String libraryPath = libraryPathBuilder.toString();
+        final Constructor<?> dexPathListConstructor = findConstructor(originalDexPathList, ClassLoader.class, String.class, String.class, File.class);
+        return dexPathListConstructor.newInstance(newDefiningContext, dexPath, libraryPath, null);
     }
 }

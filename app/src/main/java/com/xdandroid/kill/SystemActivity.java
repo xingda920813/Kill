@@ -1,5 +1,6 @@
 package com.xdandroid.kill;
 
+import android.annotation.*;
 import android.app.*;
 import android.os.*;
 
@@ -21,7 +22,7 @@ public class SystemActivity extends Activity implements Utils {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 Runtime.getRuntime().exec("su -c rm -f /sdcard/build.prop").waitFor();
                 Runtime.getRuntime().exec("su -c cp /system/build.prop /sdcard/build.prop").waitFor();
-                Path path = Paths.get("/sdcard/build.prop");
+                @SuppressLint("SdCardPath") Path path = Paths.get("/sdcard/build.prop");
                 Files.write(path, new String(Files.readAllBytes(path), StandardCharsets.UTF_8)
                         .replaceAll("control_privapp_permissions=enforce", "control_privapp_permissions=log")
                         .getBytes(StandardCharsets.UTF_8));

@@ -1,5 +1,6 @@
 package com.xdandroid.kill;
 
+import android.annotation.*;
 import android.content.*;
 
 /**
@@ -8,6 +9,7 @@ import android.content.*;
  */
 public class BootReceiver extends BroadcastReceiver {
 
+    @SuppressLint("UnsafeProtectedBroadcastReceiver")
     @Override
     public void onReceive(Context context, Intent intent) {
         new Thread(() -> {
