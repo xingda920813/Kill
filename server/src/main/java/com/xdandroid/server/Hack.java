@@ -25,7 +25,7 @@ public class Hack {
     @SuppressWarnings("unchecked")
     static void hackTarget() throws Throwable {
         HashMap<String, Integer> whiteListForTarget = new HashMap<>();
-        whiteListForTarget.put("com.tencent.mm", 23);
+        whiteListForTarget.put("com.tencent.mm", 24);
         PackageManagerService pms = (PackageManagerService) ServiceManager.getService("package");
         Field packagesField = PackageManagerService.class.getDeclaredField("mPackages");
         packagesField.setAccessible(true);
