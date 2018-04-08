@@ -12,21 +12,23 @@ public class BootReceiver extends BroadcastReceiver {
     @SuppressLint("UnsafeProtectedBroadcastReceiver")
     @Override
     public void onReceive(Context context, Intent intent) {
+        Context c = context.getApplicationContext();
         new Thread(() -> {
             try {
-                Context c = context.getApplicationContext();
-                Intent i = new Intent(c, RevokeActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                c.startActivity(i);
-                i = new Intent();
+                Intent i = new Intent();
                 i.setComponent(new ComponentName("com.xdandroid.server", "com.xdandroid.server.TargetActivity"));
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 c.startActivity(i);
-                i = new Intent();
+            } catch (Exception e) { e.printStackTrace(); }
+        }).start();
+        new Thread(() -> {
+            try {
+                Intent i = new Intent();
                 i.setComponent(new ComponentName("me.piebridge.brevent", "me.piebridge.brevent.ui.BreventActivity"));
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 c.startActivity(i);
             } catch (Exception e) { e.printStackTrace(); }
         }).start();
+        new Thread(new RevokeActivity()::invokeHackNoThrow).start();
     }
 }

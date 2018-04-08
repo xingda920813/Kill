@@ -17,6 +17,19 @@ public class RevokeActivity extends Activity implements Utils {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        invokeHack();
+        finish();
+    }
+
+    void invokeHackNoThrow() {
+        try {
+            invokeHack();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    void invokeHack() {
         setPermissive();
         PackageManager pm = getPackageManager();
         AppOpsManager aom = getSystemService(AppOpsManager.class);
@@ -56,6 +69,5 @@ public class RevokeActivity extends Activity implements Utils {
         revokeOps.stream().map(op -> "su -c " + op).forEach(cmd -> {
             try { Runtime.getRuntime().exec(cmd); } catch (IOException e) { e.printStackTrace(); }
         });
-        finish();
     }
 }

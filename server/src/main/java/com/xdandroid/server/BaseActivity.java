@@ -59,6 +59,11 @@ abstract class BaseActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        invokeHack();
+        finish();
+    }
+
+    void invokeHack() {
         try {
             sServicesClassLoader
                     .loadClass("com.xdandroid.server.Hack")
@@ -67,7 +72,6 @@ abstract class BaseActivity extends Activity {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        finish();
     }
 
     abstract Object getToken();
