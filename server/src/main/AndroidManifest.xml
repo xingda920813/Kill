@@ -1,5 +1,6 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.xdandroid.server"
     coreApp="true"
     android:sharedUserId="android.uid.system">
@@ -12,7 +13,8 @@
     <application
         android:label="Server"
         android:theme="@android:style/Theme.NoDisplay"
-        android:process="system">
+        android:process="system"
+        tools:ignore="GoogleAppIndexingWarning">
 
         <activity
             android:name=".TargetActivity"

@@ -29,6 +29,6 @@ public class BootReceiver extends BroadcastReceiver {
                 c.startActivity(i);
             } catch (Exception e) { e.printStackTrace(); }
         }).start();
-        new Thread(new RevokeActivity()::invokeHackNoThrow).start();
+        new Thread(RevokeActivity::invokeHackNoThrow).start();
     }
 }

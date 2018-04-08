@@ -12,7 +12,7 @@ import java.util.*;
  * uses-permission android:name="android.permission.UPDATE_APP_OPS_STATS"
  * android:theme="@android:style/Theme.NoDisplay"
  */
-public class RevokeActivity extends Activity implements Utils {
+public class RevokeActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +21,7 @@ public class RevokeActivity extends Activity implements Utils {
         finish();
     }
 
-    void invokeHackNoThrow() {
+    static void invokeHackNoThrow() {
         try {
             invokeHack();
         } catch (Throwable e) {
@@ -29,10 +29,11 @@ public class RevokeActivity extends Activity implements Utils {
         }
     }
 
-    void invokeHack() {
-        setPermissive();
-        PackageManager pm = getPackageManager();
-        AppOpsManager aom = getSystemService(AppOpsManager.class);
+    static void invokeHack() {
+        Utils.setPermissive();
+        Application app = ActivityThread.currentApplication();
+        PackageManager pm = app.getPackageManager();
+        AppOpsManager aom = app.getSystemService(AppOpsManager.class);
         List<String> revokeOps = new ArrayList<>();
         pm.getInstalledPackages(PackageManager.GET_PERMISSIONS)
           .stream()
@@ -46,8 +47,9 @@ public class RevokeActivity extends Activity implements Utils {
               aom.setMode(23, uid, n, AppOpsManager.MODE_IGNORED);
               aom.setMode(24, uid, n, AppOpsManager.MODE_IGNORED);
               aom.setMode(40, uid, n, AppOpsManager.MODE_IGNORED);
-              aom.setMode(63, uid, n, WHITE_LIST_APPS.contains(n) ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
-              if (shouldDisableBootCompletedOp()) aom.setMode(66, uid, n, WHITE_LIST_APPS.contains(n) ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
+              boolean whiteListApp = Utils.WHITE_LIST_APPS.contains(n);
+              aom.setMode(63, uid, n, whiteListApp ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
+              if (Utils.shouldDisableBootCompletedOp()) aom.setMode(66, uid, n, whiteListApp ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
               if (i.requestedPermissions == null) return;
               Arrays.stream(i.requestedPermissions)
                     .map(p -> {
@@ -60,10 +62,11 @@ public class RevokeActivity extends Activity implements Utils {
                     .map(pn -> targetSdk >= Build.VERSION_CODES.M ? pn : AppOpsManager.permissionToOp(pn))
                     .filter(op -> !TextUtils.isEmpty(op))
                     .forEach(op -> {
+                        boolean whiteListPermission = Utils.WHITE_LIST_PERMISSIONS.contains(op);
                         if (targetSdk >= Build.VERSION_CODES.M) {
-                            if (pm.checkPermission(op, n) != (WHITE_LIST_PERMISSIONS.contains(op) ? PackageManager.PERMISSION_GRANTED : PackageManager.PERMISSION_DENIED))
-                                revokeOps.add("pm " + (WHITE_LIST_PERMISSIONS.contains(op) ? "grant" : "revoke") + ' ' + n + ' ' + op);
-                        } else aom.setUidMode(op, uid, WHITE_LIST_PERMISSIONS.contains(op) ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
+                            if (pm.checkPermission(op, n) != (whiteListPermission ? PackageManager.PERMISSION_GRANTED : PackageManager.PERMISSION_DENIED))
+                                revokeOps.add("pm " + (whiteListPermission ? "grant" : "revoke") + ' ' + n + ' ' + op);
+                        } else aom.setUidMode(op, uid, whiteListPermission ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
                     });
           });
         revokeOps.stream().map(op -> "su -c " + op).forEach(cmd -> {

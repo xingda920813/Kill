@@ -18,7 +18,7 @@ public class GenOpsActivity extends Activity implements Utils {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setPermissive();
+        Utils.setPermissive();
         PackageManager pm = getPackageManager();
         List<String> revokeOps = new ArrayList<>();
         pm.getInstalledPackages(PackageManager.GET_PERMISSIONS)

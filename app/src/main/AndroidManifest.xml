@@ -1,5 +1,6 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.xdandroid.kill">
 
     <uses-permission android:name="android.permission.FORCE_STOP_PACKAGES"/>
@@ -9,7 +10,8 @@
 
     <application
         android:label="Kill"
-        android:theme="@android:style/Theme.NoDisplay">
+        android:theme="@android:style/Theme.NoDisplay"
+        tools:ignore="GoogleAppIndexingWarning">
 
         <activity
             android:name=".KillActivity"

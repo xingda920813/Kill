@@ -16,7 +16,7 @@ public class SystemActivity extends Activity implements Utils {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setPermissive();
+        Utils.setPermissive();
         try {
             Runtime.getRuntime().exec("su -c mount -o rw,remount,rw /system").waitFor();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

@@ -50,11 +50,11 @@ interface Utils {
 
     int CM_SDK_INT = SystemProperties.getInt("ro.cm.build.version.plat.sdk", 0);
 
-    default void setPermissive() {
+    static void setPermissive() {
         try { Runtime.getRuntime().exec("su -c setenforce 0"); } catch (IOException e) { e.printStackTrace(); }
     }
 
-    default boolean shouldDisableBootCompletedOp() {
+    static boolean shouldDisableBootCompletedOp() {
         return Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1 && CM_SDK_INT >= 6;
     }
 
