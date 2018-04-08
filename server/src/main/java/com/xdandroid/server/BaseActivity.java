@@ -46,8 +46,8 @@ class BaseActivity extends Activity {
                     elementsField.set(
                             srvDexPathList,
                             Utils.combineArray(
-                                    elementsField.get(srvDexPathList),
-                                    elementsField.get(Utils.recreateDexPathList(dexPathListField.get(BaseActivity.class.getClassLoader()), sServicesClassLoader))
+                                    (Object[]) elementsField.get(srvDexPathList),
+                                    (Object[]) elementsField.get(Utils.recreateDexPathList(dexPathListField.get(BaseActivity.class.getClassLoader()), sServicesClassLoader))
                             )
                     );
                     break;

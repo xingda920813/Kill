@@ -23,13 +23,11 @@ interface Utils {
             "com.alibaba.alimei"
     );
 
-    static Object combineArray(Object firstArray, Object secondArray) {
-        Class<?> localClass = firstArray.getClass().getComponentType();
-        int firstArrayLength = Array.getLength(firstArray);
-        int allLength = firstArrayLength + Array.getLength(secondArray);
-        Object result = Array.newInstance(localClass, allLength);
-        for (int k = 0; k < allLength; ++k) if (k < firstArrayLength) Array.set(result, k, Array.get(firstArray, k)); else Array.set(result, k, Array.get(secondArray, k - firstArrayLength));
-        return result;
+    @SuppressWarnings("unchecked")
+    static <T> T[] combineArray(T[] a, T[] b) {
+        T[] ts = (T[]) Array.newInstance(a.getClass().getComponentType(), a.length + b.length);
+        for (int i = 0; i < a.length + b.length; i++) if (i < a.length) ts[i] = a[i]; else ts[i] = b[i - a.length];
+        return ts;
     }
 
     static Field findField(Object o, String name) throws NoSuchFieldException {

@@ -49,7 +49,7 @@ public class RevokeActivity extends Activity {
               aom.setMode(40, uid, n, AppOpsManager.MODE_IGNORED);
               boolean whiteListApp = Utils.WHITE_LIST_APPS.contains(n);
               aom.setMode(63, uid, n, whiteListApp ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
-              if (Utils.shouldDisableBootCompletedOp()) aom.setMode(66, uid, n, whiteListApp ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
+              if (Utils.OP_BOOT_COMPLETED > 0) aom.setMode(Utils.OP_BOOT_COMPLETED, uid, n, whiteListApp ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
               if (i.requestedPermissions == null) return;
               Arrays.stream(i.requestedPermissions)
                     .map(p -> {

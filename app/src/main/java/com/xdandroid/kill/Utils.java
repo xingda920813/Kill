@@ -48,14 +48,10 @@ interface Utils {
             "OP_BOOT_COMPLETED"
     );
 
-    int CM_SDK_INT = SystemProperties.getInt("ro.cm.build.version.plat.sdk", 0);
+    int OP_BOOT_COMPLETED = SystemProperties.getInt("ro.lineage.build.version.plat.sdk", 0) < 6 ? 0 : Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? 72 : 66;
 
     static void setPermissive() {
         try { Runtime.getRuntime().exec("su -c setenforce 0"); } catch (IOException e) { e.printStackTrace(); }
-    }
-
-    static boolean shouldDisableBootCompletedOp() {
-        return Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1 && CM_SDK_INT >= 6;
     }
 
     @SuppressWarnings({"TypeParameterHidesVisibleType", "unchecked"})
