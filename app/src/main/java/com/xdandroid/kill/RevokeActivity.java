@@ -69,7 +69,7 @@ public class RevokeActivity extends Activity implements Utils {
                         } else aom.setUidMode(op, uid, whiteListPermission ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
                     });
           });
-        revokeOps.stream().map(op -> "su -c " + op).forEach(cmd -> {
+        revokeOps.stream().map(op -> new String[]{"su", "-c", op}).forEach(cmd -> {
             try { Runtime.getRuntime().exec(cmd); } catch (IOException e) { e.printStackTrace(); }
         });
     }

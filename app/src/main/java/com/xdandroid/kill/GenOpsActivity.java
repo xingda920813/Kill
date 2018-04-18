@@ -46,7 +46,7 @@ public class GenOpsActivity extends Activity implements Utils {
                     .forEach(op -> {
                         if (targetSdk >= Build.VERSION_CODES.M) {
                             if (pm.checkPermission(op, n) != (WHITE_LIST_PERMISSIONS.contains(op) ? PackageManager.PERMISSION_GRANTED : PackageManager.PERMISSION_DENIED))
-                                revokeOps.add("adb shell su -c pm " + (WHITE_LIST_PERMISSIONS.contains(op) ? "grant" : "revoke") + ' ' + n + ' ' + op + "\n\n");
+                                revokeOps.add("adb shell su -c \\\"pm " + (WHITE_LIST_PERMISSIONS.contains(op) ? "grant" : "revoke") + ' ' + n + ' ' + op + "\\\"\n\n");
                         } else revokeOps.add("adb shell cmd appops set " + n + ' ' + op + ' ' + (WHITE_LIST_PERMISSIONS.contains(op) ? "allow" : "ignore") + "\n\n");
                     });
           });
