@@ -66,6 +66,7 @@ class BaseActivity extends Activity {
     }
 
     void invokeHack() {
+        Utils.setPermissive();
         try {
             sServicesClassLoader
                     .loadClass("com.xdandroid.server.Hack")

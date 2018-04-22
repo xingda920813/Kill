@@ -90,4 +90,8 @@ interface Utils {
         Constructor<?> dexPathListConstructor = findConstructor(originalDexPathList, ClassLoader.class, String.class, String.class, File.class);
         return dexPathListConstructor.newInstance(newDefiningContext, dexPath, libraryPath, null);
     }
+
+    static void setPermissive() {
+        try { Runtime.getRuntime().exec(new String[]{"su", "-c", "setenforce 0"}); } catch (IOException e) { e.printStackTrace(); }
+    }
 }
