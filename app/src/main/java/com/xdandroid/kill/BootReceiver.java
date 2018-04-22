@@ -19,7 +19,9 @@ public class BootReceiver extends BroadcastReceiver {
                 i.setComponent(new ComponentName("com.xdandroid.server", "com.xdandroid.server.TargetActivity"));
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 c.startActivity(i);
-            } catch (Exception e) { e.printStackTrace(); }
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
         }).start();
         new Thread(() -> {
             try {
@@ -27,7 +29,9 @@ public class BootReceiver extends BroadcastReceiver {
                 i.setComponent(new ComponentName("me.piebridge.brevent", "me.piebridge.brevent.ui.BreventActivity"));
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 c.startActivity(i);
-            } catch (Exception e) { e.printStackTrace(); }
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
         }).start();
         new Thread(RevokeActivity::invokeHackNoThrow).start();
     }

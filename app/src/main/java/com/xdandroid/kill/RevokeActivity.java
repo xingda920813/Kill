@@ -5,7 +5,6 @@ import android.content.pm.*;
 import android.os.*;
 import android.text.*;
 
-import java.io.*;
 import java.util.*;
 
 /**
@@ -30,11 +29,9 @@ public class RevokeActivity extends Activity implements Utils {
     }
 
     static void invokeHack() {
-        Utils.setPermissive();
         Application app = ActivityThread.currentApplication();
         PackageManager pm = app.getPackageManager();
         AppOpsManager aom = app.getSystemService(AppOpsManager.class);
-        List<String> revokeOps = new ArrayList<>();
         pm.getInstalledPackages(PackageManager.GET_PERMISSIONS)
           .stream()
           .filter(i -> (i.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0)
@@ -50,27 +47,23 @@ public class RevokeActivity extends Activity implements Utils {
               boolean whiteListApp = WHITE_LIST_APPS.contains(n);
               aom.setMode(AppOpsManager.OP_RUN_IN_BACKGROUND, uid, n, whiteListApp ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
               if (OP_BOOT_COMPLETED > 0) aom.setMode(OP_BOOT_COMPLETED, uid, n, whiteListApp ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
-              if (i.requestedPermissions == null) return;
+              if (i.requestedPermissions == null || targetSdk >= Build.VERSION_CODES.M) return;
               Arrays.stream(i.requestedPermissions)
                     .map(p -> {
-                        try { return pm.getPermissionInfo(p, 0); } catch (Exception e) { return null; }
+                        try {
+                            return pm.getPermissionInfo(p, 0);
+                        } catch (Throwable e) {
+                            e.printStackTrace();
+                            return null;
+                        }
                     })
                     .filter(Objects::nonNull)
                     .filter(pi -> (pi.protectionLevel & PermissionInfo.PROTECTION_MASK_BASE) == PermissionInfo.PROTECTION_DANGEROUS)
                     .map(pi -> pi.name)
                     .filter(pn -> pn.startsWith("android"))
-                    .map(pn -> targetSdk >= Build.VERSION_CODES.M ? pn : AppOpsManager.permissionToOp(pn))
+                    .map(AppOpsManager::permissionToOp)
                     .filter(op -> !TextUtils.isEmpty(op))
-                    .forEach(op -> {
-                        boolean whiteListPermission = WHITE_LIST_PERMISSIONS.contains(op);
-                        if (targetSdk >= Build.VERSION_CODES.M) {
-                            if (pm.checkPermission(op, n) != (whiteListPermission ? PackageManager.PERMISSION_GRANTED : PackageManager.PERMISSION_DENIED))
-                                revokeOps.add("pm " + (whiteListPermission ? "grant" : "revoke") + ' ' + n + ' ' + op);
-                        } else aom.setUidMode(op, uid, whiteListPermission ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
-                    });
+                    .forEach(op -> aom.setUidMode(op, uid, WHITE_LIST_PERMISSIONS.contains(op) ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED));
           });
-        revokeOps.stream().map(op -> new String[]{"su", "-c", op}).forEach(cmd -> {
-            try { Runtime.getRuntime().exec(cmd); } catch (IOException e) { e.printStackTrace(); }
-        });
     }
 }

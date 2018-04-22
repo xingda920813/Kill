@@ -1,6 +1,5 @@
 package com.xdandroid.server;
 
-import android.annotation.*;
 import android.app.*;
 import android.os.*;
 
@@ -14,8 +13,7 @@ import dalvik.system.*;
  * android:process="system"
  * android:theme="@android:style/Theme.NoDisplay"
  */
-@SuppressLint("Registered")
-class BaseActivity extends Activity {
+abstract class BaseActivity extends Activity {
 
     static ClassLoader sServicesClassLoader;
     static {
@@ -66,7 +64,6 @@ class BaseActivity extends Activity {
     }
 
     void invokeHack() {
-        Utils.setPermissive();
         try {
             sServicesClassLoader
                     .loadClass("com.xdandroid.server.Hack")
@@ -77,6 +74,5 @@ class BaseActivity extends Activity {
         }
     }
 
-    @SuppressWarnings("JniMissingFunction")
-    native Object getToken();
+    abstract Object getToken();
 }

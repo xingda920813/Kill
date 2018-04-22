@@ -18,7 +18,6 @@ public class GenOpsActivity extends Activity implements Utils {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.setPermissive();
         PackageManager pm = getPackageManager();
         List<String> revokeOps = new ArrayList<>();
         pm.getInstalledPackages(PackageManager.GET_PERMISSIONS)
@@ -35,7 +34,12 @@ public class GenOpsActivity extends Activity implements Utils {
               if (i.requestedPermissions == null) return;
               Arrays.stream(i.requestedPermissions)
                     .map(p -> {
-                        try { return pm.getPermissionInfo(p, 0); } catch (Exception e) { return null; }
+                        try {
+                            return pm.getPermissionInfo(p, 0);
+                        } catch (Throwable e) {
+                            e.printStackTrace();
+                            return null;
+                        }
                     })
                     .filter(Objects::nonNull)
                     .filter(pi -> (pi.protectionLevel & PermissionInfo.PROTECTION_MASK_BASE) == PermissionInfo.PROTECTION_DANGEROUS)
@@ -52,9 +56,9 @@ public class GenOpsActivity extends Activity implements Utils {
           });
         try (FileOutputStream fos = new FileOutputStream(new File(Environment.getExternalStorageDirectory(), "ops.sh"))) {
             revokeOps.forEach(op -> {
-                try { fos.write(op.getBytes("UTF-8")); } catch (IOException e) { throw asUnchecked(e); }
+                try { fos.write(op.getBytes("UTF-8")); } catch (IOException e) { throw Utils.asUnchecked(e); }
             });
-        } catch (IOException e) { throw asUnchecked(e); }
+        } catch (IOException e) { throw Utils.asUnchecked(e); }
         finish();
     }
 }

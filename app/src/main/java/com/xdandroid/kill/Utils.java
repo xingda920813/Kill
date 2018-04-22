@@ -4,7 +4,6 @@ import android.*;
 import android.app.*;
 import android.os.*;
 
-import java.io.*;
 import java.util.*;
 
 interface Utils {
@@ -50,12 +49,8 @@ interface Utils {
 
     int OP_BOOT_COMPLETED = SystemProperties.getInt("ro.lineage.build.version.plat.sdk", 0) < 6 ? 0 : Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? 72 : 66;
 
-    static void setPermissive() {
-        try { Runtime.getRuntime().exec(new String[]{"su", "-c", "setenforce 0"}); } catch (IOException e) { e.printStackTrace(); }
-    }
-
-    @SuppressWarnings({"TypeParameterHidesVisibleType", "unchecked"})
-    default <E extends Throwable, R extends RuntimeException> R asUnchecked(Throwable t) throws E {
+    @SuppressWarnings("unchecked")
+    static  <E extends Throwable, R extends RuntimeException> R asUnchecked(Throwable t) throws E {
         throw (E) t;
     }
 }

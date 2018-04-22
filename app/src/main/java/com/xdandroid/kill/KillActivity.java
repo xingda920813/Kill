@@ -15,7 +15,6 @@ public class KillActivity extends Activity implements Utils {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.setPermissive();
         getPackageManager()
                 .getInstalledPackages(0)
                 .stream()

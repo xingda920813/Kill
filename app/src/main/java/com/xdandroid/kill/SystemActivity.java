@@ -8,12 +8,11 @@ import java.io.*;
 /**
  * android:theme="@android:style/Theme.NoDisplay"
  */
-public class SystemActivity extends Activity implements Utils {
+public class SystemActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.setPermissive();
         try {
             Runtime.getRuntime().exec(new String[]{"su", "-c", "mount -o rw,remount,rw /system"}).waitFor();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -31,7 +30,7 @@ public class SystemActivity extends Activity implements Utils {
                 Runtime.getRuntime().exec(new String[]{"su", "-c", "pm uninstall " + getPackageName()}).waitFor();
             }
         } catch (InterruptedException | IOException e) {
-            throw asUnchecked(e);
+            throw Utils.asUnchecked(e);
         }
         finish();
     }
