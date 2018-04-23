@@ -49,14 +49,7 @@ public class RevokeActivity extends Activity implements Utils {
               if (OP_BOOT_COMPLETED > 0) aom.setMode(OP_BOOT_COMPLETED, uid, n, whiteListApp ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
               if (i.requestedPermissions == null || targetSdk >= Build.VERSION_CODES.M) return;
               Arrays.stream(i.requestedPermissions)
-                    .map(p -> {
-                        try {
-                            return pm.getPermissionInfo(p, 0);
-                        } catch (Throwable e) {
-                            e.printStackTrace();
-                            return null;
-                        }
-                    })
+                    .map(p -> { try { return pm.getPermissionInfo(p, 0); } catch (Throwable e) { return null; } })
                     .filter(Objects::nonNull)
                     .filter(pi -> (pi.protectionLevel & PermissionInfo.PROTECTION_MASK_BASE) == PermissionInfo.PROTECTION_DANGEROUS)
                     .map(pi -> pi.name)

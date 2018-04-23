@@ -60,6 +60,7 @@ public class Hack implements Utils {
                 .stream()
                 .filter(Objects::nonNull)
                 .map(pkg -> pkg.applicationInfo)
+                .filter(ai -> NON_DEBUGGABLE_APPS.stream().noneMatch(noDbg -> ai.packageName.contains(noDbg)))
                 .forEach(ai -> ai.flags |= ApplicationInfo.FLAG_DEBUGGABLE);
     }
 }

@@ -23,6 +23,12 @@ interface Utils {
             "com.alibaba.alimei"
     );
 
+    List<String> NON_DEBUGGABLE_APPS = Arrays.asList(
+            "chrome",
+            "vending",
+            "google"
+    );
+
     @SuppressWarnings("unchecked")
     static <T> T[] combineArray(T[] a, T[] b) {
         T[] ts = (T[]) Array.newInstance(a.getClass().getComponentType(), a.length + b.length);

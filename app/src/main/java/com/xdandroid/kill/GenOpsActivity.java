@@ -33,14 +33,7 @@ public class GenOpsActivity extends Activity implements Utils {
                       .collect(Collectors.toList()));
               if (i.requestedPermissions == null) return;
               Arrays.stream(i.requestedPermissions)
-                    .map(p -> {
-                        try {
-                            return pm.getPermissionInfo(p, 0);
-                        } catch (Throwable e) {
-                            e.printStackTrace();
-                            return null;
-                        }
-                    })
+                    .map(p -> { try { return pm.getPermissionInfo(p, 0); } catch (Throwable e) { return null; } })
                     .filter(Objects::nonNull)
                     .filter(pi -> (pi.protectionLevel & PermissionInfo.PROTECTION_MASK_BASE) == PermissionInfo.PROTECTION_DANGEROUS)
                     .map(pi -> pi.name)
