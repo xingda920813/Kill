@@ -47,10 +47,12 @@ interface Utils {
             "OP_BOOT_COMPLETED"
     );
 
-    int OP_BOOT_COMPLETED = SystemProperties.getInt("ro.lineage.build.version.plat.sdk", 0) < 6 ? 0 : Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? 72 : 66;
+    int OP_BOOT_COMPLETED = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
+            (SystemProperties.getInt("ro.lineage.build.version.plat.sdk", 0) >= 6 ? 72 : 0) :
+            (SystemProperties.getInt("ro.cm.build.version.plat.sdk", 0) >= 6 ? 66 : 0);
 
     @SuppressWarnings("unchecked")
-    static  <E extends Throwable, R extends RuntimeException> R asUnchecked(Throwable t) throws E {
+    static <E extends Throwable, R extends RuntimeException> R asUnchecked(Throwable t) throws E {
         throw (E) t;
     }
 }
