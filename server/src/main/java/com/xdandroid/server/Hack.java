@@ -38,7 +38,9 @@ public class Hack implements Utils {
                 .values()
                 .stream()
                 .filter(Objects::nonNull)
-                .map(pkg -> pkg.applicationInfo);
+                .map(pkg -> pkg.applicationInfo)
+                .filter(ai -> (ai.flags & ApplicationInfo.FLAG_SYSTEM) == 0)
+                .filter(ai -> (ai.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 0);
         if (targetSdk == 0) aiStream.forEach(ai -> {
             if (ai.targetSdkVersion >= Build.VERSION_CODES.M) ai.targetSdkVersion = Build.VERSION_CODES.CUR_DEVELOPMENT - 1;
             if (ai.targetSdkVersion <= Build.VERSION_CODES.LOLLIPOP_MR1) ai.targetSdkVersion = Build.VERSION_CODES.LOLLIPOP_MR1;
@@ -66,6 +68,7 @@ public class Hack implements Utils {
                 .stream()
                 .filter(Objects::nonNull)
                 .map(pkg -> pkg.applicationInfo)
+                .filter(ai -> (ai.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 0)
                 .filter(ai -> NON_DEBUGGABLE_APPS.stream().noneMatch(noDbg -> ai.packageName.contains(noDbg)))
                 .forEach(ai -> ai.flags |= ApplicationInfo.FLAG_DEBUGGABLE);
     }
