@@ -27,6 +27,16 @@
         </activity>
 
         <activity
+            android:name=".TargetAllActivity"
+            android:label="TargetAll"
+            android:theme="@android:style/Theme.NoDisplay">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name=".DebugActivity"
             android:label="Debug"
             android:theme="@android:style/Theme.NoDisplay">

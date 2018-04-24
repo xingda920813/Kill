@@ -8,13 +8,17 @@ import com.android.server.pm.*;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.stream.*;
 
 public class Hack implements Utils {
 
     public static void hack(Object token) throws Throwable {
         switch (token.toString()) {
             case "Target":
-                hackTarget();
+                hackTarget(0);
+                break;
+            case "TargetAll":
+                hackTarget(SystemProperties.getInt("persist.server.target", Build.VERSION_CODES.CUR_DEVELOPMENT - 1));
                 break;
             case "Debug":
                 hackDebug();
@@ -23,22 +27,24 @@ public class Hack implements Utils {
     }
 
     @SuppressWarnings("unchecked")
-    static void hackTarget() throws Throwable {
+    static void hackTarget(int targetSdk) throws Throwable {
         HashMap<String, Integer> whiteListForTarget = new HashMap<>();
         whiteListForTarget.put("com.tencent.mm", Build.VERSION_CODES.M);
         PackageManagerService pms = (PackageManagerService) ServiceManager.getService("package");
         Field packagesField = PackageManagerService.class.getDeclaredField("mPackages");
         packagesField.setAccessible(true);
         ArrayMap<String, PackageParser.Package> packages = (ArrayMap<String, PackageParser.Package>) packagesField.get(pms);
-        packages.values()
+        Stream<ApplicationInfo> aiStream = packages
+                .values()
                 .stream()
                 .filter(Objects::nonNull)
-                .map(pkg -> pkg.applicationInfo)
-                .forEach(ai -> {
-                    if (ai.targetSdkVersion >= Build.VERSION_CODES.M) ai.targetSdkVersion = Build.VERSION_CODES.CUR_DEVELOPMENT - 1;
-                    if (ai.targetSdkVersion <= Build.VERSION_CODES.LOLLIPOP_MR1) ai.targetSdkVersion = Build.VERSION_CODES.LOLLIPOP_MR1;
-                    ai.targetSdkVersion = whiteListForTarget.getOrDefault(ai.packageName, ai.targetSdkVersion);
-                });
+                .map(pkg -> pkg.applicationInfo);
+        if (targetSdk == 0) aiStream.forEach(ai -> {
+            if (ai.targetSdkVersion >= Build.VERSION_CODES.M) ai.targetSdkVersion = Build.VERSION_CODES.CUR_DEVELOPMENT - 1;
+            if (ai.targetSdkVersion <= Build.VERSION_CODES.LOLLIPOP_MR1) ai.targetSdkVersion = Build.VERSION_CODES.LOLLIPOP_MR1;
+            ai.targetSdkVersion = whiteListForTarget.getOrDefault(ai.packageName, ai.targetSdkVersion);
+        });
+        else aiStream.forEach(ai -> ai.targetSdkVersion = targetSdk);
         packages.values()
                 .stream()
                 .filter(Objects::nonNull)
