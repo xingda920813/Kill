@@ -4,6 +4,8 @@ import android.app.*;
 import android.content.pm.*;
 import android.os.*;
 
+import com.xdandroid.lib.*;
+
 import java.util.*;
 
 /**

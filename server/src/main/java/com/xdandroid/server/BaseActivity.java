@@ -3,6 +3,8 @@ package com.xdandroid.server;
 import android.app.*;
 import android.os.*;
 
+import com.xdandroid.lib.*;
+
 import java.lang.reflect.*;
 
 import dalvik.system.*;

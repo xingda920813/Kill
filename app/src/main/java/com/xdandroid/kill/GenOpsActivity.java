@@ -5,6 +5,8 @@ import android.content.pm.*;
 import android.os.*;
 import android.text.*;
 
+import com.xdandroid.lib.*;
+
 import java.io.*;
 import java.util.*;
 import java.util.stream.*;
@@ -38,7 +40,7 @@ public class GenOpsActivity extends Activity implements Utils {
                     .filter(pi -> (pi.protectionLevel & PermissionInfo.PROTECTION_MASK_BASE) == PermissionInfo.PROTECTION_DANGEROUS)
                     .map(pi -> pi.name)
                     .filter(pn -> pn.startsWith("android"))
-                    .map(pn -> targetSdk >= Build.VERSION_CODES.M ? pn : AppOpsManager.opToName(AppOpsManager.permissionToOpCode(pn)))
+                    .map(pn -> targetSdk >= Build.VERSION_CODES.M ? pn : LocalAppOpsManager.opToName(LocalAppOpsManager.permissionToOpCode(pn)))
                     .filter(op -> !TextUtils.isEmpty(op))
                     .forEach(op -> {
                         if (targetSdk >= Build.VERSION_CODES.M) {

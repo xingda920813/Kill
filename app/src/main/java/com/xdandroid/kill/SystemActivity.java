@@ -3,6 +3,8 @@ package com.xdandroid.kill;
 import android.app.*;
 import android.os.*;
 
+import com.xdandroid.lib.*;
+
 import java.io.*;
 
 /**
@@ -25,7 +27,7 @@ public class SystemActivity extends Activity {
             Runtime.getRuntime().exec(new String[]{"su", "-c", "mount -o rw,remount,rw /system"}).waitFor();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 File f = new File(Environment.getExternalStorageDirectory(), XML_FILE_NAME);
-                FileUtils.copyToFileOrThrow(getAssets().open(XML_FILE_NAME), f);
+                Utils.copyToFileOrThrow(getAssets().open(XML_FILE_NAME), f);
                 Runtime.getRuntime().exec(new String[]{"su", "-c", "rm -f " + XML_SYSTEM_DEST}).waitFor();
                 Runtime.getRuntime().exec(new String[]{"su", "-c", "cp " + f.getAbsolutePath() + " " + XML_SYSTEM_DEST}).waitFor();
                 Runtime.getRuntime().exec(new String[]{"su", "-c", "chmod 0644 " + XML_SYSTEM_DEST}).waitFor();

@@ -4,8 +4,4 @@
         <permission name="android.permission.FORCE_STOP_PACKAGES"/>
         <permission name="android.permission.UPDATE_APP_OPS_STATS"/>
     </privapp-permissions>
-    <privapp-permissions package="com.xdandroid.server">
-        <permission name="android.permission.FORCE_STOP_PACKAGES"/>
-        <permission name="android.permission.UPDATE_APP_OPS_STATS"/>
-    </privapp-permissions>
 </permissions>

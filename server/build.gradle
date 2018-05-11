@@ -23,4 +23,5 @@ android {
 
 dependencies {
     compileOnly files('libs/services.jar')
+    api project(':lib')
 }

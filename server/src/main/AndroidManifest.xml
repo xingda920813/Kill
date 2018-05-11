@@ -5,11 +5,6 @@
     coreApp="true"
     android:sharedUserId="android.uid.system">
 
-    <uses-permission android:name="android.permission.FORCE_STOP_PACKAGES"/>
-    <uses-permission android:name="android.permission.UPDATE_APP_OPS_STATS"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-
     <application
         android:label="Server"
         android:theme="@android:style/Theme.NoDisplay"
@@ -39,6 +34,16 @@
         <activity
             android:name=".DebugActivity"
             android:label="Debug"
+            android:theme="@android:style/Theme.NoDisplay">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".RevokeActivity"
+            android:label="Revoke"
             android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

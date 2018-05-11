@@ -5,6 +5,7 @@ import android.os.*;
 import android.util.*;
 
 import com.android.server.pm.*;
+import com.xdandroid.lib.*;
 
 import java.lang.reflect.*;
 import java.util.*;

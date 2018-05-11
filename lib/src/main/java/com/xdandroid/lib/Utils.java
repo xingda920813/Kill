@@ -1,4 +1,7 @@
-package com.xdandroid.server;
+package com.xdandroid.lib;
+
+import android.*;
+import android.app.*;
 
 import java.io.*;
 import java.lang.reflect.*;
@@ -6,7 +9,7 @@ import java.util.*;
 
 import dalvik.system.*;
 
-interface Utils {
+public interface Utils {
 
     List<String> WHITE_LIST_APPS = Arrays.asList(
             "com.github.shadowsocks",
@@ -23,11 +26,53 @@ interface Utils {
             "com.alibaba.alimei"
     );
 
+    List<String> WHITE_LIST_PERMISSIONS = Arrays.asList(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            AppOpsManager.OPSTR_READ_EXTERNAL_STORAGE,
+            "READ_EXTERNAL_STORAGE",
+
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            AppOpsManager.OPSTR_WRITE_EXTERNAL_STORAGE,
+            "WRITE_EXTERNAL_STORAGE"
+    );
+
+    String[] BLACK_LIST_OPS = {
+            "WIFI_SCAN",
+            "WAKE_LOCK",
+            "RUN_IN_BACKGROUND",
+            "RUN_ANY_IN_BACKGROUND",
+            "OP_BOOT_COMPLETED",
+            "WRITE_SETTINGS",
+            "SYSTEM_ALERT_WINDOW"
+    };
+
+    List<String> WHITE_LIST_OPS_FOR_WHITE_LIST_APPS = Arrays.asList(
+            "RUN_IN_BACKGROUND",
+            "RUN_ANY_IN_BACKGROUND",
+            "OP_BOOT_COMPLETED"
+    );
+
     List<String> NON_DEBUGGABLE_APPS = Arrays.asList(
             "chrome",
             "vending",
             "google"
     );
+
+    @SuppressWarnings("unchecked")
+    static <E extends Throwable, R extends RuntimeException> R asUnchecked(Throwable t) throws E {
+        throw (E) t;
+    }
+
+    static void copyToFileOrThrow(InputStream in, File dest) throws IOException {
+        if (dest.exists()) dest.delete();
+        try (FileOutputStream out = new FileOutputStream(dest)) {
+            byte[] buf = new byte[8192];
+            int bytesRead;
+            while ((bytesRead = in.read(buf)) >= 0) out.write(buf, 0, bytesRead);
+            out.flush();
+            try { out.getFD().sync(); } catch (IOException ignored) { }
+        }
+    }
 
     @SuppressWarnings("unchecked")
     static <T> T[] combineArray(T[] a, T[] b) {
@@ -71,12 +116,12 @@ interface Utils {
 
     @SuppressWarnings("unchecked")
     static Object recreateDexPathList(Object originalDexPathList, ClassLoader newDefiningContext) throws Exception {
-        Field dexElementsField = findField(originalDexPathList, "dexElements");
+        Field dexElementsField = Utils.findField(originalDexPathList, "dexElements");
         Object[] dexElements = (Object[]) dexElementsField.get(originalDexPathList);
-        Field nativeLibraryDirectoriesField = findField(originalDexPathList, "nativeLibraryDirectories");
+        Field nativeLibraryDirectoriesField = Utils.findField(originalDexPathList, "nativeLibraryDirectories");
         List<File> nativeLibraryDirectories = (List<File>) nativeLibraryDirectoriesField.get(originalDexPathList);
         StringBuilder dexPathBuilder = new StringBuilder();
-        Field dexFileField = findField(dexElements.getClass().getComponentType(), "dexFile");
+        Field dexFileField = Utils.findField(dexElements.getClass().getComponentType(), "dexFile");
         boolean isFirstItem = true;
         for (Object dexElement : dexElements) {
             DexFile dexFile = (DexFile) dexFileField.get(dexElement);
@@ -93,7 +138,7 @@ interface Utils {
             libraryPathBuilder.append(libDir.getAbsolutePath());
         }
         String libraryPath = libraryPathBuilder.toString();
-        Constructor<?> dexPathListConstructor = findConstructor(originalDexPathList, ClassLoader.class, String.class, String.class, File.class);
+        Constructor<?> dexPathListConstructor = Utils.findConstructor(originalDexPathList, ClassLoader.class, String.class, String.class, File.class);
         return dexPathListConstructor.newInstance(newDefiningContext, dexPath, libraryPath, null);
     }
 }
