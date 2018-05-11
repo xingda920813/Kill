@@ -2,7 +2,6 @@ package com.xdandroid.kill;
 
 import android.*;
 import android.app.*;
-import android.os.*;
 
 import java.util.*;
 
@@ -46,10 +45,6 @@ interface Utils {
             "RUN_IN_BACKGROUND",
             "OP_BOOT_COMPLETED"
     );
-
-    int OP_BOOT_COMPLETED = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
-            (SystemProperties.getInt("ro.lineage.build.version.plat.sdk", 0) >= 6 ? 72 : 0) :
-            (SystemProperties.getInt("ro.cm.build.version.plat.sdk", 0) >= 6 ? 66 : 0);
 
     @SuppressWarnings("unchecked")
     static <E extends Throwable, R extends RuntimeException> R asUnchecked(Throwable t) throws E {
