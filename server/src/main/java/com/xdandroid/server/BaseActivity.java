@@ -47,7 +47,7 @@ abstract class BaseActivity extends Activity {
                             srvDexPathList,
                             Utils.combineArray(
                                     (Object[]) elementsField.get(srvDexPathList),
-                                    (Object[]) elementsField.get(Utils.recreateDexPathList(dexPathListField.get(BaseActivity.class.getClassLoader()), sServicesClassLoader))
+                                    (Object[]) elementsField.get(ServerUtils.recreateDexPathList(dexPathListField.get(BaseActivity.class.getClassLoader()), sServicesClassLoader))
                             )
                     );
                     break;
