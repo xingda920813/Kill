@@ -1,7 +1,6 @@
-package com.xdandroid.kill;
+package com.xdandroid.server;
 
 import android.app.*;
-import android.content.*;
 import android.os.*;
 
 import com.xdandroid.lib.*;
@@ -15,15 +14,6 @@ public class RevokeActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try {
-            Intent i = new Intent();
-            i.setComponent(new ComponentName("com.xdandroid.server", "com.xdandroid.server.RevokeActivity"));
-            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(i);
-            return;
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
         Revoke.invokeHack(this);
         finish();
     }
