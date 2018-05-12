@@ -4,7 +4,6 @@ import android.app.*;
 import android.content.*;
 import android.content.pm.*;
 import android.os.*;
-import android.text.*;
 
 import java.util.*;
 
@@ -35,9 +34,9 @@ public interface Revoke extends Utils {
                     .filter(pi -> (pi.protectionLevel & PermissionInfo.PROTECTION_MASK_BASE) == PermissionInfo.PROTECTION_DANGEROUS)
                     .map(pi -> pi.name)
                     .filter(pn -> pn.startsWith("android"))
-                    .map(AppOpsManager::permissionToOp)
-                    .filter(op -> !TextUtils.isEmpty(op))
-                    .forEach(op -> aom.setUidMode(op, uid, WHITE_LIST_PERMISSIONS.contains(op) ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED));
+                    .map(AppOpsManager::permissionToOpCode)
+                    .filter(op -> op != AppOpsManager.OP_NONE)
+                    .forEach(op -> aom.setMode(op, uid, n, WHITE_LIST_PERMISSIONS.contains(op) ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED));
           });
     }
 }

@@ -24,13 +24,13 @@ public interface Utils {
             "com.alibaba.alimei"
     );
 
-    List<String> WHITE_LIST_PERMISSIONS = Arrays.asList(
+    List<?> WHITE_LIST_PERMISSIONS = Arrays.asList(
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            AppOpsManager.OPSTR_READ_EXTERNAL_STORAGE,
+            AppOpsManager.OP_READ_EXTERNAL_STORAGE,
             "READ_EXTERNAL_STORAGE",
 
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            AppOpsManager.OPSTR_WRITE_EXTERNAL_STORAGE,
+            AppOpsManager.OP_WRITE_EXTERNAL_STORAGE,
             "WRITE_EXTERNAL_STORAGE"
     );
 
