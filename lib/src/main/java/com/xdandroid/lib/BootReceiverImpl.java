@@ -13,7 +13,7 @@ public interface BootReceiverImpl {
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 c.startActivity(i);
             } catch (Throwable e) {
-                e.printStackTrace();
+                if (!(e instanceof ActivityNotFoundException)) e.printStackTrace();
             }
         }).start();
         new Thread(() -> {
@@ -23,7 +23,7 @@ public interface BootReceiverImpl {
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 c.startActivity(i);
             } catch (Throwable e) {
-                e.printStackTrace();
+                if (!(e instanceof ActivityNotFoundException)) e.printStackTrace();
             }
         }).start();
         new Thread(() -> {

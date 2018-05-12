@@ -20,11 +20,10 @@ public class RevokeActivity extends Activity {
             i.setComponent(new ComponentName("com.xdandroid.server", "com.xdandroid.server.RevokeActivity"));
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(i);
-            return;
         } catch (Throwable e) {
-            e.printStackTrace();
+            if (!(e instanceof ActivityNotFoundException)) e.printStackTrace();
+            Revoke.invokeHack(this);
         }
-        Revoke.invokeHack(this);
         finish();
     }
 }
