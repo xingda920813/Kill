@@ -31,7 +31,8 @@ public class GenOpsActivity extends Activity implements Utils {
               int targetSdk = i.applicationInfo.targetSdkVersion;
               revokeOps.addAll(Arrays
                       .stream(BLACK_LIST_OPS)
-                      .map(op -> "adb shell cmd appops set " + n + ' ' + op + ' ' + (WHITE_LIST_APPS.contains(n) && WHITE_LIST_OPS_FOR_WHITE_LIST_APPS.contains(op) ? "allow" : "ignore") + "\n\n")
+                      .map(op -> "adb shell cmd appops set " + n + ' ' + op + ' '
+                              + (WHITE_LIST_APPS.contains(n) && WHITE_LIST_OPS_FOR_WHITE_LIST_APPS.contains(op) ? "allow" : "ignore") + "\n\n")
                       .collect(Collectors.toList()));
               if (i.requestedPermissions == null) return;
               Arrays.stream(i.requestedPermissions)

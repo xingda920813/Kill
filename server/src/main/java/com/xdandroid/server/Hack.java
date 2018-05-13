@@ -31,7 +31,6 @@ public class Hack implements Utils {
     static void hackTarget(int targetSdk) throws Throwable {
         HashMap<String, Integer> whiteListForTarget = new HashMap<>();
         whiteListForTarget.put("com.tencent.mm", Build.VERSION_CODES.M);
-        whiteListForTarget.put("com.bearyinnovative.horcrux", Build.VERSION_CODES.O);
         PackageManagerService pms = (PackageManagerService) ServiceManager.getService("package");
         Field packagesField = PackageManagerService.class.getDeclaredField("mPackages");
         packagesField.setAccessible(true);
@@ -44,7 +43,8 @@ public class Hack implements Utils {
                 .filter(ai -> (ai.flags & ApplicationInfo.FLAG_SYSTEM) == 0)
                 .filter(ai -> (ai.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 0);
         if (targetSdk == 0) aiStream.forEach(ai -> {
-            if (ai.targetSdkVersion >= Build.VERSION_CODES.M) ai.targetSdkVersion = Build.VERSION_CODES.CUR_DEVELOPMENT - 1;
+            if (ai.targetSdkVersion >= Build.VERSION_CODES.M) ai.targetSdkVersion = Build.VERSION.SDK_INT == Build.VERSION_CODES.O
+                    ? Build.VERSION_CODES.O : Build.VERSION_CODES.CUR_DEVELOPMENT - 1;
             if (ai.targetSdkVersion <= Build.VERSION_CODES.LOLLIPOP_MR1) ai.targetSdkVersion = Build.VERSION_CODES.LOLLIPOP_MR1;
             ai.targetSdkVersion = whiteListForTarget.getOrDefault(ai.packageName, ai.targetSdkVersion);
         });
