@@ -24,7 +24,7 @@ public class SystemActivity extends Activity {
             return;
         }
         try {
-            Runtime.getRuntime().exec(new String[]{"su", "-c", "mount -o rw,remount,rw /system"}).waitFor();
+            Runtime.getRuntime().exec(new String[]{"su", "-c", "mount -orw,remount /system"}).waitFor();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 File f = new File(Environment.getExternalStorageDirectory(), XML_FILE_NAME);
                 Utils.copyToFileOrThrow(getAssets().open(XML_FILE_NAME), f);
