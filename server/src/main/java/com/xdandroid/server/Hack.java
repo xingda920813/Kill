@@ -31,6 +31,7 @@ public class Hack implements Utils {
     static void hackTarget(int targetSdk) throws Throwable {
         HashMap<String, Integer> whiteListForTarget = new HashMap<>();
         whiteListForTarget.put("com.tencent.mm", Build.VERSION_CODES.M);
+        whiteListForTarget.put("com.bearyinnovative.horcrux", Build.VERSION_CODES.O);
         PackageManagerService pms = (PackageManagerService) ServiceManager.getService("package");
         Field packagesField = PackageManagerService.class.getDeclaredField("mPackages");
         packagesField.setAccessible(true);
