@@ -5,6 +5,11 @@
     coreApp="true"
     android:sharedUserId="android.uid.system">
 
+    <uses-permission android:name="android.permission.FORCE_STOP_PACKAGES"/>
+    <uses-permission android:name="android.permission.UPDATE_APP_OPS_STATS"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
     <application
         android:label="Server"
         android:theme="@android:style/Theme.NoDisplay"
