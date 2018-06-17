@@ -3,5 +3,7 @@
     <privapp-permissions package="com.xdandroid.kill">
         <permission name="android.permission.FORCE_STOP_PACKAGES"/>
         <permission name="android.permission.UPDATE_APP_OPS_STATS"/>
+        <permission name="android.permission.WRITE_SETTINGS"/>
+        <permission name="android.permission.WRITE_SECURE_SETTINGS"/>
     </privapp-permissions>
 </permissions>

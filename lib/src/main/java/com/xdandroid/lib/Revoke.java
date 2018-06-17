@@ -4,12 +4,18 @@ import android.app.*;
 import android.content.*;
 import android.content.pm.*;
 import android.os.*;
+import android.provider.*;
 
 import java.util.*;
 
 public interface Revoke extends Utils {
 
     static void invokeHack(Context c) {
+        revokePermissions(c);
+        disallowHiddenAPIs(c);
+    }
+
+    static void revokePermissions(Context c) {
         PackageManager pm = c.getPackageManager();
         AppOpsManager aom = c.getSystemService(AppOpsManager.class);
         pm.getInstalledPackages(PackageManager.GET_PERMISSIONS)
@@ -39,5 +45,11 @@ public interface Revoke extends Utils {
                     .filter(op -> op != AppOpsManager.OP_NONE)
                     .forEach(op -> aom.setMode(op, uid, n, WHITE_LIST_PERMISSIONS.contains(op) ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED));
           });
+    }
+
+    static void disallowHiddenAPIs(Context c) {
+        ContentResolver cr = c.getContentResolver();
+        Settings.Global.putInt(cr, "hidden_api_policy_pre_p_apps", 2);
+        Settings.Global.putInt(cr, "hidden_api_policy_p_apps", 2);
     }
 }
