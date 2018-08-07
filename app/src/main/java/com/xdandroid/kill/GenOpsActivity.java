@@ -8,6 +8,7 @@ import android.text.*;
 import com.xdandroid.lib.*;
 
 import java.io.*;
+import java.nio.charset.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -52,7 +53,7 @@ public class GenOpsActivity extends Activity implements Utils {
           });
         try (FileOutputStream fos = new FileOutputStream(new File(Environment.getExternalStorageDirectory(), "ops.sh"))) {
             revokeOps.forEach(op -> {
-                try { fos.write(op.getBytes("UTF-8")); } catch (IOException e) { throw Utils.asUnchecked(e); }
+                try { fos.write(op.getBytes(StandardCharsets.UTF_8)); } catch (IOException e) { throw Utils.asUnchecked(e); }
             });
         } catch (IOException e) { throw Utils.asUnchecked(e); }
         finish();

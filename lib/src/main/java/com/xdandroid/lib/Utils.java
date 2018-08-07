@@ -41,7 +41,8 @@ public interface Utils {
             "RUN_ANY_IN_BACKGROUND",
             "OP_BOOT_COMPLETED",
             "WRITE_SETTINGS",
-            "SYSTEM_ALERT_WINDOW"
+            "SYSTEM_ALERT_WINDOW",
+            "BLUETOOTH_SCAN"
     };
 
     List<String> WHITE_LIST_OPS_FOR_WHITE_LIST_APPS = Arrays.asList(

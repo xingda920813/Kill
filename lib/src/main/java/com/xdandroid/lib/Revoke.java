@@ -18,6 +18,7 @@ public interface Revoke extends Utils {
     static void revokePermissions(Context c) {
         PackageManager pm = c.getPackageManager();
         AppOpsManager aom = c.getSystemService(AppOpsManager.class);
+        assert aom != null;
         pm.getInstalledPackages(PackageManager.GET_PERMISSIONS)
           .stream()
           .filter(i -> (i.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0)
@@ -32,8 +33,10 @@ public interface Revoke extends Utils {
               aom.setMode(AppOpsManager.OP_WAKE_LOCK, uid, n, AppOpsManager.MODE_IGNORED);
               boolean whiteListApp = WHITE_LIST_APPS.contains(n);
               aom.setMode(AppOpsManager.OP_RUN_IN_BACKGROUND, uid, n, whiteListApp ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
-              //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) aom.setMode(AppOpsManager.OP_RUN_ANY_IN_BACKGROUND, uid, n,
-              //        whiteListApp ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
+              if (Build.VERSION.SDK_INT >= 28) {
+                  aom.setMode(LocalAppOpsManager.OP_RUN_ANY_IN_BACKGROUND, uid, n, whiteListApp ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
+                  aom.setMode(LocalAppOpsManager.OP_BLUETOOTH_SCAN, uid, n, AppOpsManager.MODE_IGNORED);
+              }
               if (i.requestedPermissions == null || targetSdk >= Build.VERSION_CODES.M) return;
               Arrays.stream(i.requestedPermissions)
                     .map(p -> { try { return pm.getPermissionInfo(p, 0); } catch (Throwable e) { return null; } })
