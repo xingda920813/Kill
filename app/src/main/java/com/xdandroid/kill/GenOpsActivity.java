@@ -51,6 +51,8 @@ public class GenOpsActivity extends Activity implements Utils {
                         } else revokeOps.add("adb shell cmd appops set " + n + ' ' + op + ' ' + (WHITE_LIST_PERMISSIONS.contains(op) ? "allow" : "ignore") + "\n\n");
                     });
           });
+        revokeOps.add("adb shell settings put global hidden_api_policy_pre_p_apps 2\n\n");
+        revokeOps.add("adb shell settings put global hidden_api_policy_p_apps 2\n\n");
         try (FileOutputStream fos = new FileOutputStream(new File(Environment.getExternalStorageDirectory(), "ops.sh"))) {
             revokeOps.forEach(op -> {
                 try { fos.write(op.getBytes(StandardCharsets.UTF_8)); } catch (IOException e) { throw Utils.asUnchecked(e); }
