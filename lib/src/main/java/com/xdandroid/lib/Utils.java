@@ -21,7 +21,12 @@ public interface Utils {
             "com.bearyinnovative.horcrux",
             "com.tencent.mm",
             "com.tencent.tim",
-            "com.alibaba.alimei"
+            "com.alibaba.alimei",
+
+            "com.samsung.accessory",
+            "com.samsung.android.app.watchmanager",
+            "com.samsung.android.gearfit2plugin",
+            "com.samsung.accessory.safiletransfer"
     );
 
     List<?> WHITE_LIST_PERMISSIONS = Arrays.asList(
