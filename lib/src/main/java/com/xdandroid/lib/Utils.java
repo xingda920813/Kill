@@ -21,7 +21,6 @@ public interface Utils {
             "com.bearyinnovative.horcrux",
             "com.tencent.mm",
             "com.tencent.tim",
-            "com.alibaba.alimei",
 
             "com.samsung.accessory",
             "com.samsung.android.app.watchmanager",
