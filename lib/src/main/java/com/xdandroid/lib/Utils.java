@@ -1,8 +1,5 @@
 package com.xdandroid.lib;
 
-import android.*;
-import android.app.*;
-
 import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
@@ -26,16 +23,6 @@ public interface Utils {
             "com.samsung.android.app.watchmanager",
             "com.samsung.android.gearfit2plugin",
             "com.samsung.accessory.safiletransfer"
-    );
-
-    List<?> WHITE_LIST_PERMISSIONS = Arrays.asList(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            AppOpsManager.OP_READ_EXTERNAL_STORAGE,
-            "READ_EXTERNAL_STORAGE",
-
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            AppOpsManager.OP_WRITE_EXTERNAL_STORAGE,
-            "WRITE_EXTERNAL_STORAGE"
     );
 
     String[] BLACK_LIST_OPS = {

@@ -3,7 +3,6 @@ package com.xdandroid.kill;
 import android.app.*;
 import android.content.pm.*;
 import android.os.*;
-import android.text.*;
 
 import com.xdandroid.lib.*;
 
@@ -29,27 +28,11 @@ public class GenOpsActivity extends Activity implements Utils {
           .filter(i -> (i.applicationInfo.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 0)
           .forEach(i -> {
               String n = i.applicationInfo.packageName;
-              int targetSdk = i.applicationInfo.targetSdkVersion;
               revokeOps.addAll(Arrays
                       .stream(BLACK_LIST_OPS)
                       .map(op -> "adb shell cmd appops set " + n + ' ' + op + ' '
                               + (WHITE_LIST_APPS.contains(n) && WHITE_LIST_OPS_FOR_WHITE_LIST_APPS.contains(op) ? "allow" : "ignore") + "\n\n")
                       .collect(Collectors.toList()));
-              if (i.requestedPermissions == null) return;
-              Arrays.stream(i.requestedPermissions)
-                    .map(p -> { try { return pm.getPermissionInfo(p, 0); } catch (Throwable e) { return null; } })
-                    .filter(Objects::nonNull)
-                    .filter(pi -> (pi.protectionLevel & PermissionInfo.PROTECTION_MASK_BASE) == PermissionInfo.PROTECTION_DANGEROUS)
-                    .map(pi -> pi.name)
-                    .filter(pn -> pn.startsWith("android"))
-                    .map(pn -> targetSdk >= Build.VERSION_CODES.M ? pn : LocalAppOpsManager.opToName(LocalAppOpsManager.permissionToOpCode(pn)))
-                    .filter(op -> !TextUtils.isEmpty(op))
-                    .forEach(op -> {
-                        if (targetSdk >= Build.VERSION_CODES.M) {
-                            if (pm.checkPermission(op, n) != (WHITE_LIST_PERMISSIONS.contains(op) ? PackageManager.PERMISSION_GRANTED : PackageManager.PERMISSION_DENIED))
-                                revokeOps.add("adb shell su -c \"pm " + (WHITE_LIST_PERMISSIONS.contains(op) ? "grant" : "revoke") + ' ' + n + ' ' + op + "\"\n\n");
-                        } else revokeOps.add("adb shell cmd appops set " + n + ' ' + op + ' ' + (WHITE_LIST_PERMISSIONS.contains(op) ? "allow" : "ignore") + "\n\n");
-                    });
           });
         revokeOps.add("adb shell settings put global hidden_api_policy_pre_p_apps 2\n\n");
         revokeOps.add("adb shell settings put global hidden_api_policy_p_apps 2\n\n");
