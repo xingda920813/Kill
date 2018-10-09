@@ -29,8 +29,6 @@ public class Hack implements Utils {
 
     @SuppressWarnings("unchecked")
     static void hackTarget(int targetSdk) throws Throwable {
-        HashMap<String, Integer> whiteListForTarget = new HashMap<>();
-        whiteListForTarget.put("com.tencent.mm", Build.VERSION_CODES.M);
         PackageManagerService pms = (PackageManagerService) ServiceManager.getService("package");
         Field packagesField = PackageManagerService.class.getDeclaredField("mPackages");
         packagesField.setAccessible(true);
@@ -41,12 +39,12 @@ public class Hack implements Utils {
                 .filter(Objects::nonNull)
                 .map(pkg -> pkg.applicationInfo)
                 .filter(ai -> (ai.flags & ApplicationInfo.FLAG_SYSTEM) == 0)
-                .filter(ai -> (ai.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 0);
+                .filter(ai -> (ai.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 0)
+                .filter(ai -> WHITE_LIST_APP_NAME_SLICES.stream().noneMatch(slice -> ai.packageName.contains(slice)));
         if (targetSdk == 0) aiStream.forEach(ai -> {
             if (ai.targetSdkVersion >= Build.VERSION_CODES.M) ai.targetSdkVersion = Build.VERSION.SDK_INT == Build.VERSION_CODES.O
                     ? Build.VERSION_CODES.O : Build.VERSION_CODES.CUR_DEVELOPMENT - 1;
             if (ai.targetSdkVersion <= Build.VERSION_CODES.LOLLIPOP_MR1) ai.targetSdkVersion = Build.VERSION_CODES.LOLLIPOP_MR1;
-            ai.targetSdkVersion = whiteListForTarget.getOrDefault(ai.packageName, ai.targetSdkVersion);
         });
         else aiStream.forEach(ai -> ai.targetSdkVersion = targetSdk);
         packages.values()
@@ -71,7 +69,6 @@ public class Hack implements Utils {
                 .stream()
                 .filter(Objects::nonNull)
                 .map(pkg -> pkg.applicationInfo)
-                .filter(ai -> (ai.flags & ApplicationInfo.FLAG_SYSTEM) == 0)
                 .filter(ai -> (ai.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 0)
                 .filter(ai -> WHITE_LIST_APP_NAME_SLICES.stream().noneMatch(slice -> ai.packageName.contains(slice)))
                 .forEach(ai -> ai.flags |= ApplicationInfo.FLAG_DEBUGGABLE);
