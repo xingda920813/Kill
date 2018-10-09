@@ -10,6 +10,7 @@ public interface Utils {
             "com.github.shadowsocks",
             "com.maxmpz.audioplayer",
             "com.maxmpz.audioplayer.unlock",
+            "com.topjohnwu.magisk",
             "com.xdandroid.kill",
             "com.xdandroid.server",
             "me.piebridge.brevent",
@@ -17,12 +18,16 @@ public interface Utils {
             "com.alibaba.android.rimet",
             "com.bearyinnovative.horcrux",
             "com.tencent.mm",
-            "com.tencent.tim",
+            "com.tencent.tim"
+    );
 
-            "com.samsung.accessory",
-            "com.samsung.android.app.watchmanager",
-            "com.samsung.android.gearfit2plugin",
-            "com.samsung.accessory.safiletransfer"
+    List<String> WHITE_LIST_APP_NAME_SLICES = Arrays.asList(
+            "chrome",
+            "com.sec",
+            "google",
+            "samsung",
+            "sec.android",
+            "vending"
     );
 
     String[] BLACK_LIST_OPS = {
@@ -40,12 +45,6 @@ public interface Utils {
             "RUN_IN_BACKGROUND",
             "RUN_ANY_IN_BACKGROUND",
             "OP_BOOT_COMPLETED"
-    );
-
-    List<String> NON_DEBUGGABLE_APPS = Arrays.asList(
-            "chrome",
-            "vending",
-            "google"
     );
 
     @SuppressWarnings("unchecked")

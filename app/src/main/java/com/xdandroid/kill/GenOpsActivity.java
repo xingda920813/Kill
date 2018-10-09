@@ -1,5 +1,6 @@
 package com.xdandroid.kill;
 
+import android.*;
 import android.app.*;
 import android.content.pm.*;
 import android.os.*;
@@ -20,6 +21,11 @@ public class GenOpsActivity extends Activity implements Utils {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 233);
+            finish();
+            return;
+        }
         PackageManager pm = getPackageManager();
         List<String> revokeOps = new ArrayList<>();
         pm.getInstalledPackages(PackageManager.GET_PERMISSIONS)
@@ -30,8 +36,12 @@ public class GenOpsActivity extends Activity implements Utils {
               String n = i.applicationInfo.packageName;
               revokeOps.addAll(Arrays
                       .stream(BLACK_LIST_OPS)
-                      .map(op -> "adb shell cmd appops set " + n + ' ' + op + ' '
-                              + (WHITE_LIST_APPS.contains(n) && WHITE_LIST_OPS_FOR_WHITE_LIST_APPS.contains(op) ? "allow" : "ignore") + "\n\n")
+                      .map(op -> {
+                          boolean whiteListApp = WHITE_LIST_APPS.contains(n) || WHITE_LIST_APP_NAME_SLICES.stream().anyMatch(n::contains);
+                          return "adb shell cmd appops set " + n + ' ' + op + ' '
+                                  + (whiteListApp && WHITE_LIST_OPS_FOR_WHITE_LIST_APPS.contains(op) ? "allow" : "ignore")
+                                  + "\n\n";
+                      })
                       .collect(Collectors.toList()));
           });
         revokeOps.add("adb shell settings put global hidden_api_policy_pre_p_apps 2\n\n");

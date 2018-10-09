@@ -56,6 +56,7 @@ public class Hack implements Utils {
                 .filter(si -> (si.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0)
                 .filter(si -> (si.applicationInfo.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 0)
                 .filter(si -> !WHITE_LIST_APPS.contains(si.packageName))
+                .filter(si -> WHITE_LIST_APP_NAME_SLICES.stream().noneMatch(slice -> si.packageName.contains(slice)))
                 .forEach(si -> si.flags |= ServiceInfo.FLAG_STOP_WITH_TASK);
     }
 
@@ -70,8 +71,9 @@ public class Hack implements Utils {
                 .stream()
                 .filter(Objects::nonNull)
                 .map(pkg -> pkg.applicationInfo)
+                .filter(ai -> (ai.flags & ApplicationInfo.FLAG_SYSTEM) == 0)
                 .filter(ai -> (ai.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 0)
-                .filter(ai -> NON_DEBUGGABLE_APPS.stream().noneMatch(noDbg -> ai.packageName.contains(noDbg)))
+                .filter(ai -> WHITE_LIST_APP_NAME_SLICES.stream().noneMatch(slice -> ai.packageName.contains(slice)))
                 .forEach(ai -> ai.flags |= ApplicationInfo.FLAG_DEBUGGABLE);
     }
 }
