@@ -1,6 +1,5 @@
 package com.xdandroid.lib;
 
-import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
 
@@ -23,10 +22,11 @@ public interface Utils {
 
     List<String> WHITE_LIST_APP_NAME_SLICES = Arrays.asList(
             "chrome",
-            "com.sec",
+            "com.android.",
+            "com.sec.",
             "google",
             "samsung",
-            "sec.android",
+            ".sec.android.",
             "vending"
     );
 
@@ -50,17 +50,6 @@ public interface Utils {
     @SuppressWarnings("unchecked")
     static <E extends Throwable, R extends RuntimeException> R asUnchecked(Throwable t) throws E {
         throw (E) t;
-    }
-
-    static void copyToFileOrThrow(InputStream in, File dest) throws IOException {
-        if (dest.exists()) dest.delete();
-        try (FileOutputStream out = new FileOutputStream(dest)) {
-            byte[] buf = new byte[8192];
-            int bytesRead;
-            while ((bytesRead = in.read(buf)) >= 0) out.write(buf, 0, bytesRead);
-            out.flush();
-            try { out.getFD().sync(); } catch (IOException ignored) { }
-        }
     }
 
     static <T> int indexOf(T[] array, T value) {
