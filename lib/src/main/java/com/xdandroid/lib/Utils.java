@@ -17,7 +17,10 @@ public interface Utils {
             "com.alibaba.android.rimet",
             "com.bearyinnovative.horcrux",
             "com.tencent.mm",
-            "com.tencent.tim"
+            "com.tencent.tim",
+
+            "tv.danmaku.bili",
+            "com.netease.cloudmusic"
     );
 
     List<String> WHITE_LIST_APP_NAME_SLICES = Arrays.asList(
