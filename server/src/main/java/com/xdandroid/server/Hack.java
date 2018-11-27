@@ -42,9 +42,13 @@ public class Hack implements Utils {
                 .filter(ai -> (ai.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 0)
                 .filter(ai -> WHITE_LIST_APP_NAME_SLICES.stream().noneMatch(slice -> ai.packageName.contains(slice)));
         if (targetSdk == 0) aiStream.forEach(ai -> {
-            if (ai.targetSdkVersion >= Build.VERSION_CODES.M) ai.targetSdkVersion = Build.VERSION.SDK_INT == Build.VERSION_CODES.O
-                    ? Build.VERSION_CODES.O : Build.VERSION_CODES.CUR_DEVELOPMENT - 1;
-            if (ai.targetSdkVersion <= Build.VERSION_CODES.LOLLIPOP_MR1) ai.targetSdkVersion = Build.VERSION_CODES.LOLLIPOP_MR1;
+            if (ai.targetSdkVersion >= Build.VERSION_CODES.O) {
+
+            } else if (ai.targetSdkVersion >= Build.VERSION_CODES.M) {
+                ai.targetSdkVersion = Build.VERSION_CODES.O;
+            } else {
+                ai.targetSdkVersion = Build.VERSION_CODES.LOLLIPOP_MR1;
+            }
         });
         else aiStream.forEach(ai -> ai.targetSdkVersion = targetSdk);
         packages.values()
