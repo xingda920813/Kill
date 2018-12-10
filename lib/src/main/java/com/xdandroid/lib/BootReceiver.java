@@ -2,9 +2,10 @@ package com.xdandroid.lib;
 
 import android.content.*;
 
-public interface BootReceiverImpl {
+public final class BootReceiver extends BroadcastReceiver {
 
-    default void onReceive(Context restricted) {
+    @Override
+    public final void onReceive(Context restricted, Intent intent) {
         Context c = restricted.getApplicationContext();
         new Thread(() -> {
             try {

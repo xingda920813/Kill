@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS"/>
 
     <application
+        android:name="com.xdandroid.lib.App"
         android:label="Server"
         android:theme="@android:style/Theme.NoDisplay"
         android:process="system"
@@ -58,7 +59,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".BootReceiver">
+        <receiver android:name="com.xdandroid.lib.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <action android:name="android.intent.action.PACKAGE_ADDED"/>
