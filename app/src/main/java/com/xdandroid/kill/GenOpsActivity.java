@@ -4,6 +4,7 @@ import android.*;
 import android.app.*;
 import android.content.pm.*;
 import android.os.*;
+import android.widget.*;
 
 import com.xdandroid.lib.*;
 
@@ -21,6 +22,7 @@ public class GenOpsActivity extends Activity implements Utils {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Toast.makeText(this, "GenOps", Toast.LENGTH_SHORT).show();
         if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 233);
             finish();

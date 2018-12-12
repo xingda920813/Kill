@@ -2,6 +2,7 @@ package com.xdandroid.server;
 
 import android.app.*;
 import android.os.*;
+import android.widget.*;
 
 import com.xdandroid.lib.*;
 
@@ -14,6 +15,7 @@ public class RevokeActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Toast.makeText(this, "Revoke", Toast.LENGTH_SHORT).show();
         Revoke.invokeHack(this);
         finish();
     }

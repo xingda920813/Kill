@@ -1,12 +1,14 @@
 package com.xdandroid.lib;
 
 import android.content.*;
+import android.widget.*;
 
 public final class BootReceiver extends BroadcastReceiver {
 
     @Override
     public final void onReceive(Context restricted, Intent intent) {
         Context c = restricted.getApplicationContext();
+        Toast.makeText(c, "BootReceiver", Toast.LENGTH_SHORT).show();
         new Thread(() -> {
             try {
                 Intent i = new Intent();

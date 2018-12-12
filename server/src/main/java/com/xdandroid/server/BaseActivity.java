@@ -2,6 +2,7 @@ package com.xdandroid.server;
 
 import android.app.*;
 import android.os.*;
+import android.widget.*;
 
 import com.xdandroid.lib.*;
 
@@ -61,6 +62,7 @@ abstract class BaseActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Toast.makeText(this, getToken().toString(), Toast.LENGTH_SHORT).show();
         invokeHack();
         finish();
     }
