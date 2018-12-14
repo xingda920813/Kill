@@ -24,16 +24,12 @@ public interface Revoke extends Utils {
           .forEach(i -> {
               int uid = i.applicationInfo.uid;
               String n = i.applicationInfo.packageName;
-              aom.setMode(AppOpsManager.OP_WIFI_SCAN, uid, n, AppOpsManager.MODE_IGNORED);
               aom.setMode(AppOpsManager.OP_WRITE_SETTINGS, uid, n, AppOpsManager.MODE_IGNORED);
               aom.setMode(AppOpsManager.OP_SYSTEM_ALERT_WINDOW, uid, n, AppOpsManager.MODE_IGNORED);
               aom.setMode(AppOpsManager.OP_WAKE_LOCK, uid, n, AppOpsManager.MODE_IGNORED);
               boolean whiteListApp = WHITE_LIST_APPS.contains(n) || WHITE_LIST_APP_NAME_SLICES.stream().anyMatch(n::contains);
               aom.setMode(AppOpsManager.OP_RUN_IN_BACKGROUND, uid, n, whiteListApp ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
-              if (Build.VERSION.SDK_INT >= 28) {
-                  aom.setMode(LocalAppOpsManager.OP_RUN_ANY_IN_BACKGROUND, uid, n, whiteListApp ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
-                  aom.setMode(LocalAppOpsManager.OP_BLUETOOTH_SCAN, uid, n, AppOpsManager.MODE_IGNORED);
-              }
+              if (Build.VERSION.SDK_INT >= 28) aom.setMode(LocalAppOpsManager.OP_RUN_ANY_IN_BACKGROUND, uid, n, whiteListApp ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
           });
     }
 
