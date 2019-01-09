@@ -19,7 +19,7 @@ public interface Revoke extends Utils {
         assert aom != null;
         PowerManager pwm = c.getSystemService(PowerManager.class);
         assert pwm != null;
-        IDeviceIdleController deviceIdleService = IDeviceIdleController.Stub.asInterface(ServiceManager.getService(DEVICE_IDLE_SERVICE));
+        IDeviceIdleController deviceIdleService = IDeviceIdleController.Stub.asInterface(ServiceManager.getService(Context.DEVICE_IDLE_CONTROLLER));
         pm.getInstalledPackages(PackageManager.GET_PERMISSIONS)
           .stream()
           .filter(i -> (i.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0)
@@ -33,20 +33,18 @@ public interface Revoke extends Utils {
               boolean whiteListApp = WHITE_LIST_APPS.contains(n) || WHITE_LIST_APP_NAME_SLICES.stream().anyMatch(n::contains);
               aom.setMode(AppOpsManager.OP_RUN_IN_BACKGROUND, uid, n, whiteListApp ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
               if (Build.VERSION.SDK_INT >= 28) aom.setMode(LocalAppOpsManager.OP_RUN_ANY_IN_BACKGROUND, uid, n, whiteListApp ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
-              if (deviceIdleService != null) {
-                  boolean ignoringBatteryOptimizations = pwm.isIgnoringBatteryOptimizations(n);
-                  if (whiteListApp && !ignoringBatteryOptimizations) {
-                      try {
-                          deviceIdleService.addPowerSaveWhitelistApp(n);
-                      } catch (RemoteException e) {
-                          throw Utils.asUnchecked(e);
-                      }
-                  } else if (!whiteListApp && ignoringBatteryOptimizations) {
-                      try {
-                          deviceIdleService.removePowerSaveWhitelistApp(n);
-                      } catch (RemoteException e) {
-                          throw Utils.asUnchecked(e);
-                      }
+              boolean ignoringBatteryOptimizations = pwm.isIgnoringBatteryOptimizations(n);
+              if (whiteListApp && !ignoringBatteryOptimizations) {
+                  try {
+                      deviceIdleService.addPowerSaveWhitelistApp(n);
+                  } catch (RemoteException e) {
+                      throw Utils.asUnchecked(e);
+                  }
+              } else if (!whiteListApp && ignoringBatteryOptimizations) {
+                  try {
+                      deviceIdleService.removePowerSaveWhitelistApp(n);
+                  } catch (RemoteException e) {
+                      throw Utils.asUnchecked(e);
                   }
               }
           });
