@@ -5,6 +5,8 @@ import java.util.*;
 
 public interface Utils {
 
+    String DEVICE_IDLE_SERVICE = "deviceidle";
+
     List<String> WHITE_LIST_APPS = Arrays.asList(
             "com.github.shadowsocks",
             "com.maxmpz.audioplayer",
