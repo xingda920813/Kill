@@ -19,13 +19,7 @@ public interface Revoke extends Utils {
         assert aom != null;
         PowerManager pwm = c.getSystemService(PowerManager.class);
         assert pwm != null;
-        IDeviceIdleController deviceIdleController = null;
-        try {
-            deviceIdleController = IDeviceIdleController.Stub.asInterface(ServiceManager.getService(DEVICE_IDLE_SERVICE));
-        } catch (IncompatibleClassChangeError e) {
-            e.printStackTrace();
-        }
-        IDeviceIdleController deviceIdleService = deviceIdleController;
+        IDeviceIdleController deviceIdleService = IDeviceIdleController.Stub.asInterface(ServiceManager.getService(DEVICE_IDLE_SERVICE));
         pm.getInstalledPackages(PackageManager.GET_PERMISSIONS)
           .stream()
           .filter(i -> (i.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0)
@@ -44,14 +38,14 @@ public interface Revoke extends Utils {
                   if (whiteListApp && !ignoringBatteryOptimizations) {
                       try {
                           deviceIdleService.addPowerSaveWhitelistApp(n);
-                      } catch (RemoteException | IncompatibleClassChangeError e) {
-                          e.printStackTrace();
+                      } catch (RemoteException e) {
+                          throw Utils.asUnchecked(e);
                       }
                   } else if (!whiteListApp && ignoringBatteryOptimizations) {
                       try {
                           deviceIdleService.removePowerSaveWhitelistApp(n);
-                      } catch (RemoteException | IncompatibleClassChangeError e) {
-                          e.printStackTrace();
+                      } catch (RemoteException e) {
+                          throw Utils.asUnchecked(e);
                       }
                   }
               }
