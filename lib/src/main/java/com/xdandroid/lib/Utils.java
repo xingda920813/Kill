@@ -39,7 +39,7 @@ public interface Utils {
             "WAKE_LOCK",
             "RUN_IN_BACKGROUND",
             "RUN_ANY_IN_BACKGROUND",
-            "OP_BOOT_COMPLETED",
+            "BOOT_COMPLETED",
             "WRITE_SETTINGS",
             "SYSTEM_ALERT_WINDOW"
     };
@@ -47,7 +47,7 @@ public interface Utils {
     List<String> WHITE_LIST_OPS_FOR_WHITE_LIST_APPS = Arrays.asList(
             "RUN_IN_BACKGROUND",
             "RUN_ANY_IN_BACKGROUND",
-            "OP_BOOT_COMPLETED"
+            "BOOT_COMPLETED"
     );
 
     @SuppressWarnings("unchecked")
