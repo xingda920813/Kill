@@ -21,10 +21,11 @@ public final class BootReceiver extends BroadcastReceiver {
         }).start();
         new Thread(() -> {
             try {
-                Intent i = new Intent();
-                i.setComponent(new ComponentName("me.piebridge.brevent", "me.piebridge.brevent.ui.BreventActivity"));
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                c.startActivity(i);
+                Intent i = c.getPackageManager().getLaunchIntentForPackage("me.piebridge.brevent");
+                if (i != null) {
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    c.startActivity(i);
+                }
             } catch (Throwable e) {
                 if (!(e instanceof ActivityNotFoundException)) e.printStackTrace();
             }
