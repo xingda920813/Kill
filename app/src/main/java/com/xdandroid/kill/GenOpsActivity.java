@@ -42,11 +42,13 @@ public class GenOpsActivity extends Activity implements Utils {
               revokeOps.addAll(Arrays
                       .stream(BLACK_LIST_OPS)
                       .map(op -> "adb shell cmd appops set " + n + ' ' + op + ' '
-                              + (whiteListApp && WHITE_LIST_OPS_FOR_WHITE_LIST_APPS.contains(op) ? "allow" : "ignore")
+                              + (whiteListApp && WHITE_LIST_OPS_FOR_WHITE_LIST_APPS.contains(op)
+                              ? (ALLOW_ADD_WHITE_LIST ? "allow" : "nop")
+                              : "ignore")
                               + "\n\n")
                       .collect(Collectors.toList()));
               boolean ignoringBatteryOptimizations = pwm.isIgnoringBatteryOptimizations(n);
-              if (whiteListApp && !ignoringBatteryOptimizations) {
+              if (whiteListApp && !ignoringBatteryOptimizations && ALLOW_ADD_WHITE_LIST) {
                   revokeOps.add("adb shell \"cmd deviceidle whitelist +" + n + "\"\n\n");
               } else if (!whiteListApp && ignoringBatteryOptimizations) {
                   revokeOps.add("adb shell \"cmd deviceidle whitelist -" + n + "\"\n\n");
