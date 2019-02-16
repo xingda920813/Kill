@@ -31,12 +31,10 @@ public interface Revoke extends Utils {
               aom.setMode(AppOpsManager.OP_SYSTEM_ALERT_WINDOW, uid, n, AppOpsManager.MODE_IGNORED);
               aom.setMode(AppOpsManager.OP_WAKE_LOCK, uid, n, AppOpsManager.MODE_IGNORED);
               boolean whiteListApp = WHITE_LIST_APPS.contains(n) || WHITE_LIST_APP_NAME_SLICES.stream().anyMatch(n::contains);
-              if (ALLOW_ADD_WHITE_LIST || !whiteListApp) {
-                  aom.setMode(AppOpsManager.OP_RUN_IN_BACKGROUND, uid, n, whiteListApp ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
-                  if (Build.VERSION.SDK_INT >= 28) aom.setMode(LocalAppOpsManager.OP_RUN_ANY_IN_BACKGROUND, uid, n, whiteListApp ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
-              }
+              aom.setMode(AppOpsManager.OP_RUN_IN_BACKGROUND, uid, n, whiteListApp ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
+              if (Build.VERSION.SDK_INT >= 28) aom.setMode(LocalAppOpsManager.OP_RUN_ANY_IN_BACKGROUND, uid, n, whiteListApp ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_IGNORED);
               boolean ignoringBatteryOptimizations = pwm.isIgnoringBatteryOptimizations(n);
-              if (whiteListApp && !ignoringBatteryOptimizations && ALLOW_ADD_WHITE_LIST) {
+              if (whiteListApp && !ignoringBatteryOptimizations) {
                   try {
                       deviceIdleService.addPowerSaveWhitelistApp(n);
                   } catch (RemoteException e) {

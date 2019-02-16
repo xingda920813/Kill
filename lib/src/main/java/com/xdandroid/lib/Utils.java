@@ -5,8 +5,6 @@ import java.util.*;
 
 public interface Utils {
 
-    boolean ALLOW_ADD_WHITE_LIST = true;
-
     List<String> WHITE_LIST_APPS = Arrays.asList(
             "com.github.shadowsocks",
             "com.maxmpz.audioplayer",
@@ -16,7 +14,6 @@ public interface Utils {
             "com.xdandroid.server",
             "me.piebridge.brevent",
 
-            "com.alibaba.android.rimet",
             "com.bearyinnovative.horcrux",
             "com.tencent.mm",
             "com.tencent.tim",
