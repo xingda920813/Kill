@@ -52,9 +52,10 @@ public class GenOpsActivity extends Activity implements Utils {
                   revokeOps.add("adb shell \"cmd deviceidle whitelist -" + n + "\"\n\n");
               }
           });
+        revokeOps.add("adb shell settings put global hidden_api_policy 2\n\n");
         revokeOps.add("adb shell settings put global hidden_api_policy_pre_p_apps 2\n\n");
         revokeOps.add("adb shell settings put global hidden_api_policy_p_apps 2\n\n");
-        try (FileOutputStream fos = new FileOutputStream(new File(Environment.getExternalStorageDirectory(), "ops.sh"))) {
+        try (FileOutputStream fos = new FileOutputStream(new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "ops.sh"))) {
             revokeOps.forEach(op -> {
                 try { fos.write(op.getBytes(StandardCharsets.UTF_8)); } catch (IOException e) { throw Utils.asUnchecked(e); }
             });

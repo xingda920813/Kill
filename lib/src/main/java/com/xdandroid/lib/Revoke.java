@@ -52,6 +52,7 @@ public interface Revoke extends Utils {
 
     static void disallowHiddenAPIs(Context c) {
         ContentResolver cr = c.getContentResolver();
+        Settings.Global.putInt(cr, "hidden_api_policy", 2);
         Settings.Global.putInt(cr, "hidden_api_policy_pre_p_apps", 2);
         Settings.Global.putInt(cr, "hidden_api_policy_p_apps", 2);
     }
