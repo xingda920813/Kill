@@ -16,7 +16,6 @@ public interface Utils {
 
             "com.bearyinnovative.horcrux",
             "com.tencent.mm",
-            "com.tencent.tim",
 
             "tv.danmaku.bili",
             "com.netease.cloudmusic"
