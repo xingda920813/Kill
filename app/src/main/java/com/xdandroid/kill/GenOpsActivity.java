@@ -1,6 +1,7 @@
 package com.xdandroid.kill;
 
 import android.app.*;
+import android.content.*;
 import android.content.pm.*;
 import android.os.*;
 import android.widget.*;
@@ -18,12 +19,11 @@ import java.util.stream.*;
  */
 public class GenOpsActivity extends Activity implements Utils {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Toast.makeText(this, "GenOps", Toast.LENGTH_SHORT).show();
-        PackageManager pm = getPackageManager();
-        PowerManager pwm = getSystemService(PowerManager.class);
+    static List<String> getRevokeOps(Context c, boolean adbShell) {
+        String prefix = adbShell ? "adb shell \"" : "";
+        String suffix = adbShell ? "\"\n\n" : "\n\n";
+        PackageManager pm = c.getPackageManager();
+        PowerManager pwm = c.getSystemService(PowerManager.class);
         assert pwm != null;
         List<String> revokeOps = new ArrayList<>();
         pm.getInstalledPackages(PackageManager.GET_PERMISSIONS)
@@ -35,20 +35,23 @@ public class GenOpsActivity extends Activity implements Utils {
               boolean whiteListApp = WHITE_LIST_APPS.contains(n) || WHITE_LIST_APP_NAME_SLICES.stream().anyMatch(n::contains);
               revokeOps.addAll(Arrays
                       .stream(BLACK_LIST_OPS)
-                      .map(op -> "adb shell cmd appops set " + n + ' ' + op + ' '
+                      .map(op -> prefix + "cmd appops set " + n + ' ' + op + ' '
                               + (whiteListApp && WHITE_LIST_OPS_FOR_WHITE_LIST_APPS.contains(op) ? "allow" : "ignore")
-                              + "\n\n")
+                              + suffix)
                       .collect(Collectors.toList()));
-              boolean ignoringBatteryOptimizations = pwm.isIgnoringBatteryOptimizations(n);
-              if (whiteListApp && !ignoringBatteryOptimizations) {
-                  revokeOps.add("adb shell \"cmd deviceidle whitelist +" + n + "\"\n\n");
-              } else if (!whiteListApp && ignoringBatteryOptimizations) {
-                  revokeOps.add("adb shell \"cmd deviceidle whitelist -" + n + "\"\n\n");
-              }
+              revokeOps.add(prefix + "cmd deviceidle whitelist " + (whiteListApp ? '+' : '-') + n + suffix);
           });
-        revokeOps.add("adb shell settings put global hidden_api_policy 2\n\n");
-        revokeOps.add("adb shell settings put global hidden_api_policy_pre_p_apps 2\n\n");
-        revokeOps.add("adb shell settings put global hidden_api_policy_p_apps 2\n\n");
+        revokeOps.add(prefix + "settings put global hidden_api_policy 2" + suffix);
+        revokeOps.add(prefix + "settings put global hidden_api_policy_pre_p_apps 2" + suffix);
+        revokeOps.add(prefix + "settings put global hidden_api_policy_p_apps 2" + suffix);
+        return revokeOps;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Toast.makeText(this, "GenOps", Toast.LENGTH_SHORT).show();
+        List<String> revokeOps = getRevokeOps(this, true);
         try (FileOutputStream fos = new FileOutputStream(new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "ops.sh"))) {
             revokeOps.forEach(op -> {
                 try { fos.write(op.getBytes(StandardCharsets.UTF_8)); } catch (IOException e) { throw Utils.asUnchecked(e); }
