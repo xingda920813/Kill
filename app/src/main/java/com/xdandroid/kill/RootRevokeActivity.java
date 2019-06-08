@@ -8,6 +8,8 @@ import android.widget.*;
 import com.xdandroid.lib.*;
 
 import java.io.*;
+import java.lang.*;
+import java.lang.Process;
 import java.nio.charset.*;
 import java.util.*;
 import java.util.stream.*;
@@ -16,7 +18,7 @@ import java.util.stream.*;
  * uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
  * android:theme="@android:style/Theme.NoDisplay"
  */
-public class GenOpsActivity extends Activity implements Utils {
+public class RootRevokeActivity extends Activity implements Utils {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,25 +37,40 @@ public class GenOpsActivity extends Activity implements Utils {
               boolean whiteListApp = WHITE_LIST_APPS.contains(n) || WHITE_LIST_APP_NAME_SLICES.stream().anyMatch(n::contains);
               revokeOps.addAll(Arrays
                       .stream(BLACK_LIST_OPS)
-                      .map(op -> "adb shell cmd appops set " + n + ' ' + op + ' '
+                      .map(op -> "cmd appops set " + n + ' ' + op + ' '
                               + (whiteListApp && WHITE_LIST_OPS_FOR_WHITE_LIST_APPS.contains(op) ? "allow" : "ignore")
                               + "\n\n")
                       .collect(Collectors.toList()));
               boolean ignoringBatteryOptimizations = pwm.isIgnoringBatteryOptimizations(n);
               if (whiteListApp && !ignoringBatteryOptimizations) {
-                  revokeOps.add("adb shell \"cmd deviceidle whitelist +" + n + "\"\n\n");
+                  revokeOps.add("\"cmd deviceidle whitelist +" + n + "\"\n\n");
               } else if (!whiteListApp && ignoringBatteryOptimizations) {
-                  revokeOps.add("adb shell \"cmd deviceidle whitelist -" + n + "\"\n\n");
+                  revokeOps.add("\"cmd deviceidle whitelist -" + n + "\"\n\n");
               }
           });
-        revokeOps.add("adb shell settings put global hidden_api_policy 2\n\n");
-        revokeOps.add("adb shell settings put global hidden_api_policy_pre_p_apps 2\n\n");
-        revokeOps.add("adb shell settings put global hidden_api_policy_p_apps 2\n\n");
-        try (FileOutputStream fos = new FileOutputStream(new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "ops.sh"))) {
+        revokeOps.add("settings put global hidden_api_policy 2\n\n");
+        revokeOps.add("settings put global hidden_api_policy_pre_p_apps 2\n\n");
+        revokeOps.add("settings put global hidden_api_policy_p_apps 2\n\n");
+        Process proc = null;
+        try {
+            proc = Runtime.getRuntime().exec("su");
+            OutputStream out = proc.getOutputStream();
             revokeOps.forEach(op -> {
-                try { fos.write(op.getBytes(StandardCharsets.UTF_8)); } catch (IOException e) { throw Utils.asUnchecked(e); }
+                try {
+                    out.write(op.getBytes(StandardCharsets.UTF_8));
+                    out.flush();
+                } catch (IOException e) {
+                    throw Utils.asUnchecked(e);
+                }
             });
-        } catch (IOException e) { throw Utils.asUnchecked(e); }
+            out.write("exit\n\n".getBytes(StandardCharsets.UTF_8));
+            out.flush();
+            proc.waitFor();
+        } catch (IOException | InterruptedException e) {
+            throw Utils.asUnchecked(e);
+        } finally {
+            if (proc != null) proc.destroy();
+        }
         finish();
     }
 }
