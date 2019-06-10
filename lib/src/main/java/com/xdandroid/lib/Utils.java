@@ -6,7 +6,7 @@ import java.util.*;
 public interface Utils {
 
     List<String> WHITE_LIST_APPS = Arrays.asList(
-            "com.github.shadowsocks",
+            "com.github.dawndiy.bifrostv",
             "com.maxmpz.audioplayer",
             "com.maxmpz.audioplayer.unlock",
             "com.topjohnwu.magisk",
