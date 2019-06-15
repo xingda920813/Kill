@@ -1,50 +1,82 @@
 package com.xdandroid.lib;
 
+import android.os.*;
+import android.text.*;
+
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.regex.*;
 
 public interface Utils {
 
-    List<String> WHITE_LIST_APPS = Arrays.asList(
-            "com.github.dawndiy.bifrostv",
-            "com.maxmpz.audioplayer",
-            "com.maxmpz.audioplayer.unlock",
-            "com.topjohnwu.magisk",
-            "com.xdandroid.kill",
-            "com.xdandroid.server",
-            "me.piebridge.brevent",
+    HashSet<String> WHITE_LIST_APPS = getWhiteListApps();
 
-            "com.bearyinnovative.horcrux",
-            "com.tencent.mm",
+    static HashSet<String> getWhiteListApps() {
+        HashSet<String> set = new HashSet<>(Arrays.asList(
+                "com.github.dawndiy.bifrostv",
+                "com.maxmpz.audioplayer",
+                "com.maxmpz.audioplayer.unlock",
+                "com.topjohnwu.magisk",
+                "com.xdandroid.kill",
+                "com.xdandroid.server",
+                "me.piebridge.brevent",
 
-            "tv.danmaku.bili",
-            "com.netease.cloudmusic"
-    );
+                "com.bearyinnovative.horcrux",
+                "com.tencent.mm",
 
-    List<String> WHITE_LIST_APP_NAME_SLICES = Arrays.asList(
-            "chrome",
-            "com.android.",
-            "com.sec.",
-            "google",
-            "samsung",
-            ".sec.android.",
-            "vending"
-    );
+                "tv.danmaku.bili",
+                "com.netease.cloudmusic"
+        ));
+        String prop = SystemProperties.get("persist.lib.whiteListApps");
+        if (!TextUtils.isEmpty(prop)) Collections.addAll(set, prop.split(Pattern.quote(";")));
+        return set;
+    }
 
-    String[] BLACK_LIST_OPS = {
-            "WAKE_LOCK",
-            "RUN_IN_BACKGROUND",
-            "RUN_ANY_IN_BACKGROUND",
-            "BOOT_COMPLETED",
-            "WRITE_SETTINGS",
-            "SYSTEM_ALERT_WINDOW"
-    };
+    ArrayList<String> WHITE_LIST_APP_NAME_SLICES = getWhiteListAppNameSlices();
 
-    List<String> WHITE_LIST_OPS_FOR_WHITE_LIST_APPS = Arrays.asList(
-            "RUN_IN_BACKGROUND",
-            "RUN_ANY_IN_BACKGROUND",
-            "BOOT_COMPLETED"
-    );
+    static ArrayList<String> getWhiteListAppNameSlices() {
+        ArrayList<String> l = new ArrayList<>(Arrays.asList(
+                "chrome",
+                "com.android.",
+                "com.sec.",
+                "google",
+                "samsung",
+                ".sec.android.",
+                "vending"
+        ));
+        String prop = SystemProperties.get("persist.lib.whiteListAppNameSlices");
+        if (!TextUtils.isEmpty(prop)) Collections.addAll(l, prop.split(Pattern.quote(";")));
+        return l;
+    }
+
+    ArrayList<String> BLACK_LIST_OPS = getBlackListOps();
+
+    static ArrayList<String> getBlackListOps() {
+        ArrayList<String> l = new ArrayList<>(Arrays.asList(
+                "WAKE_LOCK",
+                "RUN_IN_BACKGROUND",
+                "RUN_ANY_IN_BACKGROUND",
+                "BOOT_COMPLETED",
+                "WRITE_SETTINGS",
+                "SYSTEM_ALERT_WINDOW"
+        ));
+        String prop = SystemProperties.get("persist.lib.blackListOps");
+        if (!TextUtils.isEmpty(prop)) Collections.addAll(l, prop.split(Pattern.quote(";")));
+        return l;
+    }
+
+    HashSet<String> WHITE_LIST_OPS_FOR_WHITE_LIST_APPS = getWhiteListOpsForWhiteListApps();
+
+    static HashSet<String> getWhiteListOpsForWhiteListApps() {
+        HashSet<String> set = new HashSet<>(Arrays.asList(
+                "RUN_IN_BACKGROUND",
+                "RUN_ANY_IN_BACKGROUND",
+                "BOOT_COMPLETED"
+        ));
+        String prop = SystemProperties.get("persist.lib.whiteListOpsForWhiteListApps");
+        if (!TextUtils.isEmpty(prop)) Collections.addAll(set, prop.split(Pattern.quote(";")));
+        return set;
+    }
 
     @SuppressWarnings("unchecked")
     static <E extends Throwable, R extends RuntimeException> R asUnchecked(Throwable t) throws E {
@@ -71,7 +103,9 @@ public interface Utils {
     static <T> T[] combineArray(T[] oriFirst, T[] newLast) {
         if (containsAll(oriFirst, newLast)) return oriFirst;
         T[] ts = (T[]) Array.newInstance(oriFirst.getClass().getComponentType(), oriFirst.length + newLast.length);
-        for (int i = 0; i < oriFirst.length + newLast.length; i++) if (i < oriFirst.length) ts[i] = oriFirst[i]; else ts[i] = newLast[i - oriFirst.length];
+        for (int i = 0; i < oriFirst.length + newLast.length; i++)
+            if (i < oriFirst.length) ts[i] = oriFirst[i];
+            else ts[i] = newLast[i - oriFirst.length];
         return ts;
     }
 

@@ -33,8 +33,8 @@ public class GenOpsActivity extends Activity implements Utils {
           .forEach(i -> {
               String n = i.applicationInfo.packageName;
               boolean whiteListApp = WHITE_LIST_APPS.contains(n) || WHITE_LIST_APP_NAME_SLICES.stream().anyMatch(n::contains);
-              revokeOps.addAll(Arrays
-                      .stream(BLACK_LIST_OPS)
+              revokeOps.addAll(BLACK_LIST_OPS
+                      .stream()
                       .map(op -> prefix + "cmd appops set " + n + ' ' + op + ' '
                               + (whiteListApp && WHITE_LIST_OPS_FOR_WHITE_LIST_APPS.contains(op) ? "allow" : "ignore")
                               + suffix)
