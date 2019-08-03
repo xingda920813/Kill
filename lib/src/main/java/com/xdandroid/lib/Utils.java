@@ -21,7 +21,6 @@ public interface Utils {
                 "com.xdandroid.server",
                 "me.piebridge.brevent",
 
-                "com.bearyinnovative.horcrux",
                 "com.tencent.mm",
 
                 "tv.danmaku.bili",
