@@ -16,8 +16,6 @@
 
 package com.xdandroid.lib;
 
-import android.app.usage.*;
-
 /**
  * API for interacting with "application operation" tracking.
  *
@@ -184,6 +182,30 @@ public interface LocalAppOpsManager {
     int OP_START_FOREGROUND = 76;
     /** @hide */
     int OP_BLUETOOTH_SCAN = 77;
+    /** @hide Use the BiometricPrompt/BiometricManager APIs. */
+    int OP_USE_BIOMETRIC = 78;
+    /** @hide Physical activity recognition. */
+    int OP_ACTIVITY_RECOGNITION = 79;
+    /** @hide Financial app sms read. */
+    int OP_SMS_FINANCIAL_TRANSACTIONS = 80;
+    /** @hide Read media of audio type. */
+    int OP_READ_MEDIA_AUDIO = 81;
+    /** @hide Write media of audio type. */
+    int OP_WRITE_MEDIA_AUDIO = 82;
+    /** @hide Read media of video type. */
+    int OP_READ_MEDIA_VIDEO = 83;
+    /** @hide Write media of video type. */
+    int OP_WRITE_MEDIA_VIDEO = 84;
+    /** @hide Read media of image type. */
+    int OP_READ_MEDIA_IMAGES = 85;
+    /** @hide Write media of image type. */
+    int OP_WRITE_MEDIA_IMAGES = 86;
+    /** @hide Has a legacy (non-isolated) view of storage. */
+    int OP_LEGACY_STORAGE = 87;
+    /** @hide Accessing accessibility features */
+    int OP_ACCESS_ACCESSIBILITY = 88;
+    /** @hide Read the device identifiers (IMEI / MEID, IMSI, SIM / Build serial) */
+    int OP_READ_DEVICE_IDENTIFIERS = 89;
     /** @hide */
-    int _NUM_OP = 78;
+    int _NUM_OP = 90;
 }
