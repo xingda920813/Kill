@@ -37,10 +37,7 @@ public interface Utils {
         ArrayList<String> l = new ArrayList<>(Arrays.asList(
                 "chrome",
                 "com.android.",
-                "com.sec.",
                 "google",
-                "samsung",
-                ".sec.android.",
                 "vending"
         ));
         String prop = SystemProperties.get("persist.lib.whiteListAppNameSlices");
