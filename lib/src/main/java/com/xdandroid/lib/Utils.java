@@ -40,7 +40,7 @@ public interface Utils {
                 "google",
                 "vending"
         ));
-        String prop = SystemProperties.get("persist.lib.whiteListAppNameSlices");
+        String prop = SystemProperties.get("persist.lib.whiteAppNameSlices");
         if (!TextUtils.isEmpty(prop)) Collections.addAll(l, prop.split(Pattern.quote(";")));
         return l;
     }
@@ -69,7 +69,7 @@ public interface Utils {
                 "RUN_ANY_IN_BACKGROUND",
                 "BOOT_COMPLETED"
         ));
-        String prop = SystemProperties.get("persist.lib.whiteListOpsForWhiteListApps");
+        String prop = SystemProperties.get("persist.lib.whiteOpsForWhiteApp");
         if (!TextUtils.isEmpty(prop)) Collections.addAll(set, prop.split(Pattern.quote(";")));
         return set;
     }
